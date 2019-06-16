@@ -15,7 +15,10 @@
 		42E8C5E122ACBCB500544392 /* SharedCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E022ACBCB500544392 /* SharedCode.swift */; };
 		42E8C5E522ACC8B100544392 /* StartTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E422ACC8B100544392 /* StartTimes.swift */; };
 		42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E622ACD22E00544392 /* EndTimes.swift */; };
-		42E8C5E922ACDADA00544392 /* TotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E822ACDADA00544392 /* TotalTimes.swift */; };
+		42E8C5E922ACDADA00544392 /* EnteredTotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E822ACDADA00544392 /* EnteredTotalTimes.swift */; };
+		42F32DCB22B4DC0800976FFC /* CategoryComboTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F32DCA22B4DC0800976FFC /* CategoryComboTableCellView.swift */; };
+		42F32DCD22B4E38300976FFC /* TableTotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F32DCC22B4E38300976FFC /* TableTotalTimes.swift */; };
+		42F32DCF22B4E4CA00976FFC /* TotalTimesTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F32DCE22B4E4CA00976FFC /* TotalTimesTableCellView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +33,10 @@
 		42E8C5E022ACBCB500544392 /* SharedCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCode.swift; sourceTree = "<group>"; };
 		42E8C5E422ACC8B100544392 /* StartTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTimes.swift; sourceTree = "<group>"; };
 		42E8C5E622ACD22E00544392 /* EndTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndTimes.swift; sourceTree = "<group>"; };
-		42E8C5E822ACDADA00544392 /* TotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalTimes.swift; sourceTree = "<group>"; };
+		42E8C5E822ACDADA00544392 /* EnteredTotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnteredTotalTimes.swift; sourceTree = "<group>"; };
+		42F32DCA22B4DC0800976FFC /* CategoryComboTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryComboTableCellView.swift; sourceTree = "<group>"; };
+		42F32DCC22B4E38300976FFC /* TableTotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableTotalTimes.swift; sourceTree = "<group>"; };
+		42F32DCE22B4E4CA00976FFC /* TotalTimesTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalTimesTableCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +86,7 @@
 				42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */,
 				426A435F22AE1510004141DA /* VesselDowntimeReporter.swift */,
 				42E8C5E322ACC88500544392 /* DataSources */,
+				42F32DC922B4DBEC00976FFC /* TableView Supporting Files */,
 			);
 			path = Vessel;
 			sourceTree = "<group>";
@@ -89,9 +96,19 @@
 			children = (
 				42E8C5E422ACC8B100544392 /* StartTimes.swift */,
 				42E8C5E622ACD22E00544392 /* EndTimes.swift */,
-				42E8C5E822ACDADA00544392 /* TotalTimes.swift */,
+				42E8C5E822ACDADA00544392 /* EnteredTotalTimes.swift */,
+				42F32DCC22B4E38300976FFC /* TableTotalTimes.swift */,
 			);
 			path = DataSources;
+			sourceTree = "<group>";
+		};
+		42F32DC922B4DBEC00976FFC /* TableView Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				42F32DCA22B4DC0800976FFC /* CategoryComboTableCellView.swift */,
+				42F32DCE22B4E4CA00976FFC /* TotalTimesTableCellView.swift */,
+			);
+			path = "TableView Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,8 +185,11 @@
 				42E8C5E122ACBCB500544392 /* SharedCode.swift in Sources */,
 				42ADA65B22A659F400689489 /* VesselDowntimeViewController.swift in Sources */,
 				42ADA65922A659F400689489 /* AppDelegate.swift in Sources */,
-				42E8C5E922ACDADA00544392 /* TotalTimes.swift in Sources */,
+				42E8C5E922ACDADA00544392 /* EnteredTotalTimes.swift in Sources */,
+				42F32DCD22B4E38300976FFC /* TableTotalTimes.swift in Sources */,
 				42E8C5E522ACC8B100544392 /* StartTimes.swift in Sources */,
+				42F32DCF22B4E4CA00976FFC /* TotalTimesTableCellView.swift in Sources */,
+				42F32DCB22B4DC0800976FFC /* CategoryComboTableCellView.swift in Sources */,
 				42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

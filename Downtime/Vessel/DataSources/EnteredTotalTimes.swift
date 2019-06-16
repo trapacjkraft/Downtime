@@ -1,5 +1,5 @@
 //
-//  TotalTimes.swift
+//  EnteredTotalTimes.swift
 //  Downtime
 //
 //  Created by Joshua Kraft on 6/9/19.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class TotalTimes: NSObject, NSComboBoxDataSource {
+class EnteredTotalTimes: NSObject, NSComboBoxDataSource {
     
     var times = [String]()
     

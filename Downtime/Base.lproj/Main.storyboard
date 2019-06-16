@@ -927,11 +927,14 @@
                                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KUa-LM-iaQ">
                                                                     <rect key="frame" x="0.0" y="25" width="75" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" identifier="startTime" title="Table View Cell" id="xZv-eN-cHr">
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" identifier="startTime" title="Table View Cell" id="xZv-eN-cHr">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
+                                                                    <connections>
+                                                                        <action selector="tableCellValueEdited:" target="BkR-Mi-9XP" id="vxf-zw-1Hs"/>
+                                                                    </connections>
                                                                 </textField>
                                                             </subviews>
                                                             <connections>
@@ -960,11 +963,14 @@
                                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wOb-rX-RTU">
                                                                     <rect key="frame" x="0.0" y="25" width="75" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" identifier="endTime" title="Table View Cell" id="5KX-Bw-hXC">
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" identifier="endTime" title="Table View Cell" id="5KX-Bw-hXC">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
+                                                                    <connections>
+                                                                        <action selector="tableCellValueEdited:" target="BkR-Mi-9XP" id="LlS-7s-LTr"/>
+                                                                    </connections>
                                                                 </textField>
                                                             </subviews>
                                                             <connections>
@@ -993,11 +999,14 @@
                                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Q4-gi-9Ur">
                                                                     <rect key="frame" x="0.0" y="25" width="400" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" identifier="downtimeReason" title="Table View Cell" id="gWI-1Y-yN8">
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" identifier="downtimeReason" title="Table View Cell" id="gWI-1Y-yN8">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
+                                                                    <connections>
+                                                                        <action selector="tableCellValueEdited:" target="BkR-Mi-9XP" id="1Og-MO-baA"/>
+                                                                    </connections>
                                                                 </textField>
                                                             </subviews>
                                                             <connections>
@@ -1019,22 +1028,25 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
-                                                        <tableCellView id="X20-pG-UtR">
+                                                        <tableCellView id="X20-pG-UtR" customClass="TotalTimesTableCellView" customModule="Downtime" customModuleProvider="target">
                                                             <rect key="frame" x="560" y="1" width="75" height="42"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vfE-rs-aad">
-                                                                    <rect key="frame" x="0.0" y="25" width="75" height="17"/>
-                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" identifier="totalTime" title="Table View Cell" id="piJ-0N-LD4">
+                                                                <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZcT-HL-3IG">
+                                                                    <rect key="frame" x="0.0" y="15" width="75" height="26"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" buttonBordered="NO" completes="NO" usesDataSource="YES" numberOfVisibleItems="5" id="H0P-mZ-AJM">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                    </textFieldCell>
-                                                                </textField>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </comboBoxCell>
+                                                                    <connections>
+                                                                        <action selector="tableCellValueEdited:" target="BkR-Mi-9XP" id="Xb4-V8-98y"/>
+                                                                    </connections>
+                                                                </comboBox>
                                                             </subviews>
                                                             <connections>
-                                                                <outlet property="textField" destination="vfE-rs-aad" id="xql-BL-LDB"/>
+                                                                <outlet property="totalTimesComboBox" destination="ZcT-HL-3IG" id="5gs-Pd-j5z"/>
                                                             </connections>
                                                         </tableCellView>
                                                     </prototypeCellViews>
@@ -1052,22 +1064,31 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
-                                                        <tableCellView id="h1F-uc-Mzo">
+                                                        <tableCellView id="h1F-uc-Mzo" customClass="CategoryComboTableCellView" customModule="Downtime" customModuleProvider="target">
                                                             <rect key="frame" x="638" y="1" width="158" height="42"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XVM-QQ-V62">
-                                                                    <rect key="frame" x="0.0" y="25" width="158" height="17"/>
-                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" identifier="category" title="Table View Cell" id="emZ-nH-tLx">
+                                                                <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DIg-pJ-pTf">
+                                                                    <rect key="frame" x="3" y="15" width="155" height="26"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" buttonBordered="NO" numberOfVisibleItems="5" id="UH6-Ra-uUR">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                    </textFieldCell>
-                                                                </textField>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                        <objectValues>
+                                                                            <string>Mechanical</string>
+                                                                            <string>Operational Scenario</string>
+                                                                            <string>System / Tech</string>
+                                                                            <string>Deadtime</string>
+                                                                        </objectValues>
+                                                                    </comboBoxCell>
+                                                                    <connections>
+                                                                        <action selector="tableCellValueEdited:" target="BkR-Mi-9XP" id="Kkn-nq-Egg"/>
+                                                                    </connections>
+                                                                </comboBox>
                                                             </subviews>
                                                             <connections>
-                                                                <outlet property="textField" destination="XVM-QQ-V62" id="fiJ-Yy-hJZ"/>
+                                                                <outlet property="categoryComboBox" destination="DIg-pJ-pTf" id="DlL-xA-UXO"/>
                                                             </connections>
                                                         </tableCellView>
                                                     </prototypeCellViews>

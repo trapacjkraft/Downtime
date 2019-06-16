@@ -71,6 +71,8 @@ class VesselDowntimeReporter: NSObject {
     
     func getNightsideReportContent() {
         
+        report.removeAll()
+        
         report.append("Hour,Start Time,End Time,Downtime Reason,Total Time,Category\n")
         report.append(emptyLine)
         
@@ -126,6 +128,9 @@ class VesselDowntimeReporter: NSObject {
 
                 }
             }
+            
+            report.append(emptyLine)
+            
         }
         
         let totalDowntime = totalOp + totalSys + totalMech + totalDead
@@ -134,12 +139,12 @@ class VesselDowntimeReporter: NSObject {
             report.append(emptyLine)
         }
         
-        report.append("Total Operational,\(String(totalOp)),,,\n")
-        report.append("Total System/Tech,\(String(totalSys)),,,\n")
-        report.append("Total Mechanical,\(String(totalMech)),,,\n")
-        report.append("Total Deadtime,\(String(totalDead)),,,\n")
+        report.append("Total Operational,\(String(totalOp)),Hours,,\n")
+        report.append("Total System/Tech,\(String(totalSys)),Hours,,\n")
+        report.append("Total Mechanical,\(String(totalMech)),Hours,,\n")
+        report.append("Total Deadtime,\(String(totalDead)),Hours,,\n")
         report.append(emptyLine)
-        report.append("Total Downtime,\(String(totalDowntime)),,,\n")
+        report.append("Total Downtime,\(String(totalDowntime)),Hours,,\n")
 
         let date = Date()
         let df = DateFormatter()

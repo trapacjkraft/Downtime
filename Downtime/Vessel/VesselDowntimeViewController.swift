@@ -22,13 +22,23 @@ class VesselDowntimeViewController: NSTabViewController {
         
     let startTimes = StartTimes()
     let endTimes = EndTimes()
-    let totalTimes = TotalTimes()
+    let totalTimes = EnteredTotalTimes()
     
     let reporter = VesselDowntimeReporter()
     
     var downtimeEntries = [[String: String]]() {
         didSet {
-            downtimeTableView.reloadData()
+            downtimeEntries = downtimeEntries.sorted(by: {
+                if $0["startTime"]! != $1["startTime"]! {
+                    return $0["startTime"]! < $1["startTime"]!
+                } else {
+                    return $0["endTime"]! < $1["endTime"]!
+                }
+            })
+            
+            if downtimeValuesChangedBetween(newValues: downtimeEntries, oldValues: oldValue) {
+                downtimeTableView.reloadData()
+            }
         }
     }
     
@@ -44,6 +54,8 @@ class VesselDowntimeViewController: NSTabViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        downtimeTableView.rowHeight = 26
         
         fetchTimes()
         
@@ -62,6 +74,26 @@ class VesselDowntimeViewController: NSTabViewController {
         dateFetcherTimer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(updateTimes), userInfo: nil, repeats: true)
     }
     
+    func downtimeValuesChangedBetween(newValues: [[String: String]], oldValues: [[String: String]]) -> Bool {
+        
+        var index = 0
+        
+        for _ in newValues {
+            if oldValues.isEmpty {
+                return true
+            }
+            if oldValues.count < newValues.count {
+                return true
+            }
+            if newValues[index] != oldValues[index] && index < oldValues.count {
+                return true
+            }
+            index += 1
+        }
+        
+        return false
+    }
+
     func fetchTimes() {
         startTimes.fetchStartTimes()
         endTimes.fetchEndTimes()
@@ -83,39 +115,18 @@ class VesselDowntimeViewController: NSTabViewController {
         addDowntimeButton.isEnabled = true
     }
     
+    
     @IBAction func endTimeDoneEditing(_ sender: Any) {
         
-        guard !endTimeComboBox.stringValue.isEmpty && endTimeComboBox.stringValue.length == 4 else {
-            return
+        if endTimeComboBox.stringValue.length == 4 && endTimeComboBox.stringValue.isNumeric {
+            totalTimes.getTotalTimes(start: startTimeComboBox.stringValue, end: endTimeComboBox.stringValue)
+            hasEndTime = true
         }
         
-        hasEndTime = true
-        
-        totalTimes.getTotalTimes(start: startTimeComboBox.stringValue, end: endTimeComboBox.stringValue)
         totalTimeComboBox.reloadData()
     }
     
     @IBAction func addDowntimeEntry(_ sender: Any) {
-        
-        guard !startTimeComboBox.stringValue.isEmpty else {
-            return
-        }
-        
-        guard !endTimeComboBox.stringValue.isEmpty else {
-            return
-        }
-        
-        guard !downtimeReasonField.stringValue.isEmpty else {
-            return
-        }
-        
-        guard !totalTimeComboBox.stringValue.isEmpty else {
-            return
-        }
-        
-        guard !categoryComboBox.stringValue.isEmpty else {
-            return
-        }
         
         var entry: [String: String] = [
             "startTime":"",
@@ -125,16 +136,43 @@ class VesselDowntimeViewController: NSTabViewController {
             "category":""
         ]
         
-        entry.updateValue(startTimeComboBox.stringValue, forKey: "startTime")
-        entry.updateValue(endTimeComboBox.stringValue, forKey: "endTime")
-        entry.updateValue(downtimeReasonField.stringValue, forKey: "downtimeReason")
-        entry.updateValue(totalTimeComboBox.stringValue, forKey: "totalTime")
-        entry.updateValue(categoryComboBox.stringValue, forKey: "category")
+        if !startTimeComboBox.stringValue.isEmpty {
+            entry.updateValue(startTimeComboBox.stringValue, forKey: "startTime")
+        }
+        
+        if endTimeComboBox.stringValue.isEmpty {
+            entry.updateValue("missing", forKey: "endTime")
+        } else {
+            entry.updateValue(endTimeComboBox.stringValue, forKey: "endTime")
+        }
+        
+        if !downtimeReasonField.stringValue.isEmpty {
+            entry.updateValue(downtimeReasonField.stringValue, forKey: "downtimeReason")
+        }
+        
+        if !totalTimeComboBox.stringValue.isEmpty {
+            entry.updateValue(totalTimeComboBox.stringValue, forKey: "totalTime")
+        }
+        
+        if !categoryComboBox.stringValue.isEmpty {
+            entry.updateValue(categoryComboBox.stringValue, forKey: "category")
+        }
         
         downtimeEntries.append(entry)
         
         clearBoxes()
         
+    }
+    
+    @IBAction func tableCellValueEdited(_ sender: NSTextField) {
+        
+        let selectedRow = downtimeTableView.row(for: sender)
+        
+        if let columnIdentifier: String = sender.superview?.identifier?.rawValue {
+            if selectedRow != -1 {
+                downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: columnIdentifier)
+            }
+        }
     }
     
     func clearBoxes() {
@@ -162,13 +200,39 @@ extension VesselDowntimeViewController: NSTableViewDataSource, NSTableViewDelega
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         
         let item = downtimeEntries[row]
+        
         let cell = tableView.makeView(withIdentifier: (tableColumn!.identifier), owner: self) as? NSTableCellView
         
-        cell?.textField?.stringValue = item[(tableColumn?.identifier.rawValue)!]!
+        if cell!.identifier!.rawValue == "category" {
+            let comboCell = cell as? CategoryComboTableCellView
+            comboCell?.categoryComboBox.stringValue = item[(tableColumn!.identifier.rawValue)]!
+            return comboCell
+        }
         
+        if cell!.identifier!.rawValue == "totalTime" {
+            let comboCell = cell as! TotalTimesTableCellView
+            
+            comboCell.totalTimes.startTime = item["startTime"]!
+            comboCell.totalTimes.endTime = item["endTime"]!
+            
+            comboCell.totalTimesComboBox.dataSource = comboCell.totalTimes
+            comboCell.totalTimesComboBox.delegate = comboCell.totalTimes
+            
+            if item["endTime"]!.length == 4 && item["endTime"]!.isNumeric {
+                comboCell.totalTimes.getTotalTimes(start: comboCell.totalTimes.startTime, end: comboCell.totalTimes.endTime)
+                comboCell.totalTimesComboBox.reloadData()
+            }
+        
+            comboCell.totalTimesComboBox.stringValue = item[(tableColumn!.identifier.rawValue)]!
+            
+            return comboCell
+        }
+        
+        cell?.textField?.stringValue = item[(tableColumn?.identifier.rawValue)!]!
         return cell
     }
     
+
     /*func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
         return downtimeEntries[row]
     }*/
