@@ -69,6 +69,11 @@ class VesselDowntimeReporter: NSObject {
         getNightsideReportContent()
     }
     
+    func getDaysideReportContent() {
+        //To come
+    }
+    
+    
     func getNightsideReportContent() {
         
         report.removeAll()
@@ -169,4 +174,9 @@ class VesselDowntimeReporter: NSObject {
         ws.openFile(destination)
         
     }
+    
+    func getHootReportContent() {
+        //To come
+    }
+    
 }

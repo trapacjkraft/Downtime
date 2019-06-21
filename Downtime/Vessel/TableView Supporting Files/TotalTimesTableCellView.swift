@@ -13,11 +13,7 @@ class TotalTimesTableCellView: NSTableCellView {
     @IBOutlet var totalTimesComboBox: NSComboBox!
     
     var totalTimes = TableTotalTimes()
-    
-    override func viewWillDraw() {
-        Swift.print("x")
-    }
-    
+        
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
 

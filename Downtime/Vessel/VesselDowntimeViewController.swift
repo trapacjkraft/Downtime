@@ -19,18 +19,23 @@ class VesselDowntimeViewController: NSTabViewController {
     
     @IBOutlet var downtimeTableView: NSTableView!
     @IBOutlet var exportButton: NSButton!
-        
+    @IBOutlet var removalButton: NSButton!
+    
     let startTimes = StartTimes()
     let endTimes = EndTimes()
     let totalTimes = EnteredTotalTimes()
     
     let reporter = VesselDowntimeReporter()
     
+    let selectionChangedNotication = NSTableView.selectionDidChangeNotification
+    
+    let nc = NotificationCenter.default
+    
     var downtimeEntries = [[String: String]]() {
         didSet {
             downtimeEntries = downtimeEntries.sorted(by: {
-                if $0["startTime"]! != $1["startTime"]! {
-                    return $0["startTime"]! < $1["startTime"]!
+                if $0["sortTime"]! != $1["sortTime"]! {
+                    return $0["sortTime"]! < $1["sortTime"]!
                 } else {
                     return $0["endTime"]! < $1["endTime"]!
                 }
@@ -72,6 +77,9 @@ class VesselDowntimeViewController: NSTabViewController {
         totalTimeComboBox.reloadData()
         
         dateFetcherTimer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(updateTimes), userInfo: nil, repeats: true)
+        
+        nc.addObserver(self, selector: #selector(enableRemovalButton), name: selectionChangedNotication, object: nil)
+        
     }
     
     func downtimeValuesChangedBetween(newValues: [[String: String]], oldValues: [[String: String]]) -> Bool {
@@ -83,6 +91,9 @@ class VesselDowntimeViewController: NSTabViewController {
                 return true
             }
             if oldValues.count < newValues.count {
+                return true
+            }
+            if newValues.count < oldValues.count {
                 return true
             }
             if newValues[index] != oldValues[index] && index < oldValues.count {
@@ -130,6 +141,7 @@ class VesselDowntimeViewController: NSTabViewController {
         
         var entry: [String: String] = [
             "startTime":"",
+            "sortTime":"",
             "endTime":"",
             "downtimeReason":"",
             "totalTime":"",
@@ -138,6 +150,17 @@ class VesselDowntimeViewController: NSTabViewController {
         
         if !startTimeComboBox.stringValue.isEmpty {
             entry.updateValue(startTimeComboBox.stringValue, forKey: "startTime")
+            
+            let minutes = startTimeComboBox.stringValue.substring(fromIndex: 2)
+            var hour = Int(startTimeComboBox.stringValue.substring(toIndex: startTimeComboBox.stringValue.length - 2))!
+            
+            if hour >= 0 && hour <= 7 {
+                hour += 24
+            }
+            
+            let sortTime = String(hour) + minutes
+            
+            entry.updateValue(sortTime, forKey: "sortTime")
         }
         
         if endTimeComboBox.stringValue.isEmpty {
@@ -187,7 +210,29 @@ class VesselDowntimeViewController: NSTabViewController {
         reporter.getDowntimeEntries(data: downtimeEntries)
     }
     
+    @objc func enableRemovalButton() {
+        
+        let selectedRows = downtimeTableView.selectedRowIndexes
+        
+        if !selectedRows.isEmpty {
+            removalButton.isEnabled = true
+        } else { removalButton.isEnabled = false }
+        
+    }
     
+    @IBAction func removeDowntimeEntries(_ sender: Any) {
+        
+        let selectedRows = downtimeTableView.selectedRowIndexes
+        let indicesToRemove = selectedRows.reversed()
+        
+        for index in indicesToRemove {
+            downtimeEntries.remove(at: index)
+        }
+        
+        downtimeTableView.reloadData()
+        removalButton.isEnabled = false
+        
+    }
     
 }
 

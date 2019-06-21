@@ -900,7 +900,7 @@
                                     <rect key="frame" x="1" y="0.0" width="798" height="253"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="42" rowSizeStyle="automatic" headerView="2lF-A6-LnR" viewBased="YES" id="Wgt-v2-Vl8">
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" autosaveColumns="NO" rowHeight="42" rowSizeStyle="automatic" headerView="2lF-A6-LnR" viewBased="YES" id="Wgt-v2-Vl8">
                                             <rect key="frame" x="0.0" y="0.0" width="798" height="228"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
@@ -1115,7 +1115,7 @@
                                 </tableHeaderView>
                             </scrollView>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IEY-TJ-Hez">
-                                <rect key="frame" x="360" y="3" width="80" height="32"/>
+                                <rect key="frame" x="706" y="3" width="80" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Export" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xgw-fs-Wfh">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1123,6 +1123,17 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="writeReport:" target="BkR-Mi-9XP" id="uyt-du-O1q"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeh-ES-jcH">
+                                <rect key="frame" x="14" y="3" width="153" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Remove Downtime" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T8U-Ds-c3I">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="removeDowntimeEntries:" target="BkR-Mi-9XP" id="mt1-qz-LgU"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -1134,6 +1145,7 @@
                         <outlet property="downtimeTableView" destination="Wgt-v2-Vl8" id="aoh-wq-4qe"/>
                         <outlet property="endTimeComboBox" destination="c0Q-QA-yQF" id="EFr-Yz-SDk"/>
                         <outlet property="exportButton" destination="IEY-TJ-Hez" id="rOJ-l8-ce1"/>
+                        <outlet property="removalButton" destination="oeh-ES-jcH" id="u0h-7W-ldx"/>
                         <outlet property="startTimeComboBox" destination="AoU-t3-OPg" id="FPj-QU-3th"/>
                         <outlet property="totalTimeComboBox" destination="kZ5-rL-nAx" id="AKE-DI-O57"/>
                     </connections>
