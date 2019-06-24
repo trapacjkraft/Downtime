@@ -96,7 +96,7 @@ class VesselDowntimeReporter: NSObject {
                 if sortedDowntimeEntries["2200"]!.count == 1 {
                     break
                 }
-                report.append("2200-2300")
+                report.append("2200-2300,,,,,,\n")
             case "2300":
                 report.append("2300-0000,,,,,,\n")
             case "0000":
@@ -172,6 +172,11 @@ class VesselDowntimeReporter: NSObject {
         let ws = NSWorkspace()
         
         ws.openFile(destination)
+        report.removeAll()
+        
+        for (key, _) in sortedDowntimeEntries {
+            sortedDowntimeEntries.updateValue([[:]], forKey: key)
+        }
         
     }
     
