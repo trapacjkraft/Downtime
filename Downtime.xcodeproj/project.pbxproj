@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		426A436022AE1510004141DA /* VesselDowntimeReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426A435F22AE1510004141DA /* VesselDowntimeReporter.swift */; };
+		426A436022AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */; };
+		426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */; };
 		42ADA65922A659F400689489 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42ADA65822A659F400689489 /* AppDelegate.swift */; };
 		42ADA65B22A659F400689489 /* VesselDowntimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */; };
 		42ADA65D22A659F500689489 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 42ADA65C22A659F500689489 /* Assets.xcassets */; };
@@ -22,7 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		426A435F22AE1510004141DA /* VesselDowntimeReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeReporter.swift; sourceTree = "<group>"; };
+		426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeSpreadsheetGenerator.swift; sourceTree = "<group>"; };
+		426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeTextReportGenerator.swift; sourceTree = "<group>"; };
 		42ADA65522A659F400689489 /* Downtime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Downtime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		42ADA65822A659F400689489 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeViewController.swift; sourceTree = "<group>"; };
@@ -84,7 +86,8 @@
 			isa = PBXGroup;
 			children = (
 				42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */,
-				426A435F22AE1510004141DA /* VesselDowntimeReporter.swift */,
+				426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */,
+				426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */,
 				42E8C5E322ACC88500544392 /* DataSources */,
 				42F32DC922B4DBEC00976FFC /* TableView Supporting Files */,
 			);
@@ -181,7 +184,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				426A436022AE1510004141DA /* VesselDowntimeReporter.swift in Sources */,
+				426A436022AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift in Sources */,
 				42E8C5E122ACBCB500544392 /* SharedCode.swift in Sources */,
 				42ADA65B22A659F400689489 /* VesselDowntimeViewController.swift in Sources */,
 				42ADA65922A659F400689489 /* AppDelegate.swift in Sources */,
@@ -191,6 +194,7 @@
 				42F32DCF22B4E4CA00976FFC /* TotalTimesTableCellView.swift in Sources */,
 				42F32DCB22B4DC0800976FFC /* CategoryComboTableCellView.swift in Sources */,
 				42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */,
+				426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

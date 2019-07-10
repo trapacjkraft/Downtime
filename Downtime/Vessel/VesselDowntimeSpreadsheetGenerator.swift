@@ -1,5 +1,5 @@
 //
-//  VesselDowntimeReporter.swift
+//  VesselDowntimeSpreadsheetGenerator.swift
 //  Downtime
 //
 //  Created by Joshua Kraft on 6/9/19.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class VesselDowntimeReporter: NSObject {
+class VesselDowntimeSpreadsheetGenerator: NSObject {
 
     var allDowntimeEntries = [[String: String]]()
     
@@ -93,9 +93,6 @@ class VesselDowntimeReporter: NSObject {
             case "2100":
                 report.append("2100-2200,,,,,,\n")
             case "2200":
-                if sortedDowntimeEntries["2200"]!.count == 1 {
-                    break
-                }
                 report.append("2200-2300,,,,,,\n")
             case "2300":
                 report.append("2300-0000,,,,,,\n")

@@ -47,7 +47,8 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit Downtime" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="Quit Downtime" id="4sb-4s-VLi">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -83,7 +84,8 @@
                                             </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
-                                        <menuItem title="Close" keyEquivalent="w" id="DVo-aG-piG">
+                                        <menuItem title="Close" id="DVo-aG-piG">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="performClose:" target="Ady-hI-5gd" id="HmO-Ls-i7Q"/>
                                             </connections>
@@ -687,10 +689,10 @@
                     <window key="window" title="Downtime" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="800" height="498"/>
+                        <rect key="contentRect" x="196" y="240" width="800" height="508"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
-                        <value key="minSize" type="size" width="800" height="498"/>
-                        <value key="maxSize" type="size" width="800" height="498"/>
+                        <value key="minSize" type="size" width="800" height="508"/>
+                        <value key="maxSize" type="size" width="800" height="508"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
                         </connections>
@@ -727,7 +729,7 @@
                 </tabViewController>
                 <customObject id="wSd-gm-eMA" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="827" y="1075"/>
+            <point key="canvasLocation" x="1064" y="1075"/>
         </scene>
         <!--Landside Downtime View Controller-->
         <scene sceneID="ACT-pB-swS">
@@ -758,11 +760,11 @@
             <objects>
                 <viewController id="BkR-Mi-9XP" customClass="VesselDowntimeViewController" customModule="Downtime" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="5gd-Gf-kYe">
-                        <rect key="frame" x="0.0" y="0.0" width="800" height="498"/>
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="508"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box fixedFrame="YES" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="bIf-rT-6Ff">
-                                <rect key="frame" x="17" y="309" width="766" height="181"/>
+                                <rect key="frame" x="17" y="319" width="766" height="181"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" ambiguous="YES" id="vWr-hj-AWX">
                                     <rect key="frame" x="3" y="3" width="760" height="175"/>
@@ -838,6 +840,7 @@
                                                 <objectValues>
                                                     <string>Mechanical</string>
                                                     <string>Operational Scenario</string>
+                                                    <string>E-Stop</string>
                                                     <string>System / Tech</string>
                                                     <string>Deadtime</string>
                                                 </objectValues>
@@ -892,7 +895,7 @@
                                 </view>
                             </box>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="44" horizontalPageScroll="10" verticalLineScroll="44" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eyp-zR-aHn">
-                                <rect key="frame" x="0.0" y="51" width="800" height="254"/>
+                                <rect key="frame" x="0.0" y="61" width="800" height="254"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <clipView key="contentView" ambiguous="YES" id="Nen-oX-Uc0">
                                     <rect key="frame" x="1" y="0.0" width="798" height="253"/>
@@ -1076,6 +1079,7 @@
                                                                         <objectValues>
                                                                             <string>Mechanical</string>
                                                                             <string>Operational Scenario</string>
+                                                                            <string>E-Stop</string>
                                                                             <string>System / Tech</string>
                                                                             <string>Deadtime</string>
                                                                         </objectValues>
@@ -1113,18 +1117,18 @@
                                 </tableHeaderView>
                             </scrollView>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IEY-TJ-Hez">
-                                <rect key="frame" x="706" y="3" width="80" height="32"/>
+                                <rect key="frame" x="669" y="13" width="117" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Export" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xgw-fs-Wfh">
+                                <buttonCell key="cell" type="push" title="Spreadsheet" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xgw-fs-Wfh">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="writeReport:" target="BkR-Mi-9XP" id="uyt-du-O1q"/>
+                                    <action selector="generateSpreadsheet:" target="BkR-Mi-9XP" id="uyt-du-O1q"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeh-ES-jcH">
-                                <rect key="frame" x="14" y="3" width="153" height="32"/>
+                                <rect key="frame" x="14" y="13" width="153" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Remove Downtime" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T8U-Ds-c3I">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1134,23 +1138,78 @@
                                     <action selector="removeDowntimeEntries:" target="BkR-Mi-9XP" id="mt1-qz-LgU"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0us-Nu-CcD">
+                                <rect key="frame" x="603" y="13" width="66" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Text" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6ZT-cg-cT0">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="generateTextReport:" target="BkR-Mi-9XP" id="9AC-yg-eYF"/>
+                                </connections>
+                            </button>
+                            <box fixedFrame="YES" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="cFE-Va-LOW">
+                                <rect key="frame" x="453" y="13" width="151" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <view key="contentView" ambiguous="YES" id="OzT-4q-gbx">
+                                    <rect key="frame" x="3" y="3" width="145" height="27"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yXZ-AJ-ZRu">
+                                            <rect key="frame" x="19" y="5" width="46" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="Day" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="9ET-ZI-jpv">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="shiftSelected:" target="BkR-Mi-9XP" id="IqY-FZ-GFg"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L5U-Re-Unz">
+                                            <rect key="frame" x="72" y="5" width="55" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="Night" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="2IX-gJ-yeR">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="shiftSelected:" target="BkR-Mi-9XP" id="GET-t1-wP7"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                </view>
+                            </box>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0ya-3B-9L1">
+                                <rect key="frame" x="514" y="46" width="29" height="14"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Shift" id="Qnp-zj-0jj">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="addDowntimeButton" destination="4Tr-hv-I39" id="BhD-Lh-TXO"/>
                         <outlet property="categoryComboBox" destination="Dxl-cE-1Xb" id="2BQ-dy-BNS"/>
+                        <outlet property="dayShiftRadioButton" destination="yXZ-AJ-ZRu" id="zRM-tm-Ohl"/>
                         <outlet property="downtimeReasonField" destination="6Z4-4H-wdM" id="qhg-QB-GPf"/>
                         <outlet property="downtimeTableView" destination="Wgt-v2-Vl8" id="aoh-wq-4qe"/>
                         <outlet property="endTimeComboBox" destination="c0Q-QA-yQF" id="EFr-Yz-SDk"/>
-                        <outlet property="exportButton" destination="IEY-TJ-Hez" id="rOJ-l8-ce1"/>
+                        <outlet property="nightShiftRadioButton" destination="L5U-Re-Unz" id="pma-1c-wdh"/>
                         <outlet property="removalButton" destination="oeh-ES-jcH" id="u0h-7W-ldx"/>
+                        <outlet property="spreadsheetGeneratorButton" destination="IEY-TJ-Hez" id="rOJ-l8-ce1"/>
                         <outlet property="startTimeComboBox" destination="AoU-t3-OPg" id="FPj-QU-3th"/>
+                        <outlet property="textReportGeneratorButton" destination="0us-Nu-CcD" id="6rL-uv-qeU"/>
                         <outlet property="totalTimeComboBox" destination="kZ5-rL-nAx" id="AKE-DI-O57"/>
                     </connections>
                 </viewController>
                 <customObject id="s7q-Ei-Bfb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-15" y="1050"/>
+            <point key="canvasLocation" x="-15" y="1055"/>
         </scene>
         <!--Rail Downtime View Controller-->
         <scene sceneID="94h-uA-Mvj">

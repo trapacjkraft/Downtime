@@ -18,14 +18,20 @@ class VesselDowntimeViewController: NSTabViewController {
     @IBOutlet var addDowntimeButton: NSButton!
     
     @IBOutlet var downtimeTableView: NSTableView!
-    @IBOutlet var exportButton: NSButton!
+    
+    @IBOutlet var dayShiftRadioButton: NSButton!
+    @IBOutlet var nightShiftRadioButton: NSButton!
+    
+    @IBOutlet var spreadsheetGeneratorButton: NSButton!
+    @IBOutlet var textReportGeneratorButton: NSButton!
     @IBOutlet var removalButton: NSButton!
     
     let startTimes = StartTimes()
     let endTimes = EndTimes()
     let totalTimes = EnteredTotalTimes()
     
-    let reporter = VesselDowntimeReporter()
+    let spreadsheetGenerator = VesselDowntimeSpreadsheetGenerator()
+    let textReportGenerator = VesselDowntimeTextReportGenerator()
     
     let selectionChangedNotication = NSTableView.selectionDidChangeNotification
     
@@ -158,7 +164,12 @@ class VesselDowntimeViewController: NSTabViewController {
                 hour += 24
             }
             
-            let sortTime = String(hour) + minutes
+            var strHour = String(hour)
+            if strHour.length == 1 {
+                strHour.insert("0", at: String.Index.init(utf16Offset: 0, in: strHour))
+            }
+            
+            let sortTime = strHour + minutes
             
             entry.updateValue(sortTime, forKey: "sortTime")
         }
@@ -206,8 +217,21 @@ class VesselDowntimeViewController: NSTabViewController {
         categoryComboBox.stringValue.removeAll()
     }
     
-    @IBAction func writeReport(_ sender: Any) {
-        reporter.getDowntimeEntries(data: downtimeEntries)
+    @IBAction func shiftSelected(_ sender: Any) {
+        textReportGeneratorButton.isEnabled = true
+        spreadsheetGeneratorButton.isEnabled = true
+    }
+    
+    @IBAction func generateTextReport(_ sender: Any) {
+        if dayShiftRadioButton.state == .on {
+            textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
+        } else if nightShiftRadioButton.state == .on {
+            textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+        }
+    }
+    
+    @IBAction func generateSpreadsheet(_ sender: Any) {
+        spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries)
     }
     
     @objc func enableRemovalButton() {
@@ -276,11 +300,6 @@ extension VesselDowntimeViewController: NSTableViewDataSource, NSTableViewDelega
         cell?.textField?.stringValue = item[(tableColumn?.identifier.rawValue)!]!
         return cell
     }
-    
-
-    /*func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
-        return downtimeEntries[row]
-    }*/
     
     
 }
