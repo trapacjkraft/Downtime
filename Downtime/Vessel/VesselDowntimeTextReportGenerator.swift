@@ -325,6 +325,8 @@ class VesselDowntimeTextReportGenerator: NSObject {
         totalEStop = 0.0
         totalMech = 0.0
         totalDead = 0.0
+        isDaysideReport = false
+        isNightsideReport = false
         
     }
     

@@ -36,6 +36,7 @@ class VesselDowntimeViewController: NSTabViewController {
     let selectionChangedNotication = NSTableView.selectionDidChangeNotification
     
     let nc = NotificationCenter.default
+    let fm = FileManager.default
     
     var downtimeEntries = [[String: String]]() {
         didSet {
@@ -85,8 +86,99 @@ class VesselDowntimeViewController: NSTabViewController {
         dateFetcherTimer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(updateTimes), userInfo: nil, repeats: true)
         
         nc.addObserver(self, selector: #selector(enableRemovalButton), name: selectionChangedNotication, object: nil)
+        nc.addObserver(self, selector: #selector(saveData), name: NSApplication.willTerminateNotification, object: nil)
+        nc.addObserver(self, selector: #selector(loadData), name: NSApplication.didFinishLaunchingNotification, object: nil)
         
     }
+    
+    
+    @objc func saveData() {
+        
+        let saveDirectory: String = NSHomeDirectory() + "/Documents/"
+        var sessionDataContents = [String]()
+        
+        for entry in downtimeEntries {
+            var data = String()
+            data.append("\(entry["startTime"]!),")
+            data.append("\(entry["sortTime"]!),")
+            data.append("\(entry["endTime"]!),")
+            data.append("\(entry["downtimeReason"]!),")
+            data.append("\(entry["totalTime"]!),")
+            data.append("\(entry["category"]!),\'")
+            
+            sessionDataContents.append(data)
+            
+        }
+        
+        let fileContents = sessionDataContents.joined()
+        let fileName = "downtime_session_data.txt"
+        
+        let destination = saveDirectory + fileName
+        
+        do {
+            try fileContents.write(to: URL(fileURLWithPath: destination), atomically: true, encoding: .utf8)
+            Swift.print("Session data saved to \(destination)")
+        } catch {
+            Swift.print(error)
+        }
+        
+    }
+    
+    @objc func loadData() {
+        var fileContents = String()
+        var fileCreationDate = Date()
+        let loadPath: String = NSHomeDirectory() + "/Documents/downtime_session_data.txt"
+
+        if fm.fileExists(atPath: loadPath) {
+            do {
+                let fileAttributes = try fm.attributesOfItem(atPath: loadPath) as [FileAttributeKey:Any]
+                fileCreationDate = fileAttributes[FileAttributeKey.creationDate] as! Date
+            } catch {
+                Swift.print("error")
+            }
+            
+            let now = Date()
+            
+            let difference = now.timeIntervalSince(fileCreationDate)
+            
+            if difference < 28800 {
+                fileContents = String(data: fm.contents(atPath: loadPath)!, encoding: .utf8) ?? ""
+                var downtimeData = fileContents.components(separatedBy: "'")
+                downtimeData.removeLast()
+                
+                for dataEntry in downtimeData {
+                    
+                    var data = dataEntry.components(separatedBy: ",")
+                    data.removeLast()
+                    
+                    var entry: [String: String] = [
+                        "startTime":"",
+                        "sortTime":"",
+                        "endTime":"",
+                        "downtimeReason":"",
+                        "totalTime":"",
+                        "category":""
+                    ]
+
+                    entry.updateValue(data[0], forKey: "startTime")
+                    entry.updateValue(data[1], forKey: "sortTime")
+                    entry.updateValue(data[2], forKey: "endTime")
+                    entry.updateValue(data[3], forKey: "downtimeReason")
+                    entry.updateValue(data[4], forKey: "totalTime")
+                    entry.updateValue(data[5], forKey: "category")
+                    
+                    downtimeEntries.append(entry)
+                    
+                }
+                
+            }
+        
+            
+        }
+        
+        
+    }
+    
     
     func downtimeValuesChangedBetween(newValues: [[String: String]], oldValues: [[String: String]]) -> Bool {
         
@@ -131,7 +223,6 @@ class VesselDowntimeViewController: NSTabViewController {
     func enableAddDowntimeButton() {
         addDowntimeButton.isEnabled = true
     }
-    
     
     @IBAction func endTimeDoneEditing(_ sender: Any) {
         
@@ -231,7 +322,11 @@ class VesselDowntimeViewController: NSTabViewController {
     }
     
     @IBAction func generateSpreadsheet(_ sender: Any) {
-        spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries)
+        if dayShiftRadioButton.state == .on {
+            spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
+        } else if nightShiftRadioButton.state == .on {
+            spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+        }
     }
     
     @objc func enableRemovalButton() {
