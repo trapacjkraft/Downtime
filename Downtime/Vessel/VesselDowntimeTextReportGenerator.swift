@@ -143,7 +143,7 @@ class VesselDowntimeTextReportGenerator: NSObject {
                         let reportLine = NSMutableAttributedString()
                         
                         let firstPart = NSAttributedString(string: "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t")
-                        let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))"
+                        let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))\n"
                         let boldedPart = secondPart.withBoldText(boldPartsOfString: [secondPart as NSString], font: font, boldFont: boldFont)
                         
                         reportLine.append(firstPart)
@@ -232,7 +232,7 @@ class VesselDowntimeTextReportGenerator: NSObject {
                         let reportLine = NSMutableAttributedString()
                         
                         let firstPart = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
-                        let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))"
+                        let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))\n"
                         let boldedPart = secondPart.withBoldText(boldPartsOfString: [secondPart as NSString], font: font, boldFont: boldFont)
                         
                         reportLine.append(firstPart)
