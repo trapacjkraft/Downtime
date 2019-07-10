@@ -171,6 +171,13 @@ class VesselDowntimeViewController: NSTabViewController {
                     
                 }
                 
+            } else {
+                do {
+                    try fm.removeItem(at: URL(fileURLWithPath: loadPath))
+                    Swift.print("Session data older than eight hours has been removed.")
+                } catch {
+                    Swift.print("error")
+                }
             }
         
             
