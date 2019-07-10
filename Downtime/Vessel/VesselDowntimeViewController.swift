@@ -91,7 +91,6 @@ class VesselDowntimeViewController: NSTabViewController {
         
     }
     
-    
     @objc func saveData() {
         
         let saveDirectory: String = NSHomeDirectory() + "/Documents/"
@@ -99,12 +98,12 @@ class VesselDowntimeViewController: NSTabViewController {
         
         for entry in downtimeEntries {
             var data = String()
-            data.append("\(entry["startTime"]!),")
-            data.append("\(entry["sortTime"]!),")
-            data.append("\(entry["endTime"]!),")
-            data.append("\(entry["downtimeReason"]!),")
-            data.append("\(entry["totalTime"]!),")
-            data.append("\(entry["category"]!),\'")
+            data.append("\(entry["startTime"]!)|")
+            data.append("\(entry["sortTime"]!)|")
+            data.append("\(entry["endTime"]!)|")
+            data.append("\(entry["downtimeReason"]!)|")
+            data.append("\(entry["totalTime"]!)|")
+            data.append("\(entry["category"]!)|+")
             
             sessionDataContents.append(data)
             
@@ -143,12 +142,12 @@ class VesselDowntimeViewController: NSTabViewController {
             
             if difference < 28800 {
                 fileContents = String(data: fm.contents(atPath: loadPath)!, encoding: .utf8) ?? ""
-                var downtimeData = fileContents.components(separatedBy: "'")
+                var downtimeData = fileContents.components(separatedBy: "+")
                 downtimeData.removeLast()
                 
                 for dataEntry in downtimeData {
                     
-                    var data = dataEntry.components(separatedBy: ",")
+                    var data = dataEntry.components(separatedBy: "|")
                     data.removeLast()
                     
                     var entry: [String: String] = [
@@ -185,7 +184,6 @@ class VesselDowntimeViewController: NSTabViewController {
         
         
     }
-    
     
     func downtimeValuesChangedBetween(newValues: [[String: String]], oldValues: [[String: String]]) -> Bool {
         
@@ -294,6 +292,7 @@ class VesselDowntimeViewController: NSTabViewController {
         
         clearBoxes()
         
+        addDowntimeButton.keyEquivalent = String("")
     }
     
     @IBAction func tableCellValueEdited(_ sender: NSTextField) {
@@ -304,6 +303,15 @@ class VesselDowntimeViewController: NSTabViewController {
             if selectedRow != -1 {
                 downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: columnIdentifier)
             }
+        }
+    }
+    
+    @IBAction func categorySelected(_ sender: Any) {
+        if !categoryComboBox.stringValue.isEmpty {
+            
+            let array = [unichar(NSCarriageReturnCharacter)]
+            addDowntimeButton.keyEquivalent = String(utf16CodeUnits: array, count: 1)
+            
         }
     }
     
