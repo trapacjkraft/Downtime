@@ -818,9 +818,6 @@
                                                     <string>Item 3</string>
                                                 </objectValues>
                                             </comboBoxCell>
-                                            <connections>
-                                                <action selector="endTimeDoneEditing:" target="BkR-Mi-9XP" id="dCy-He-jx2"/>
-                                            </connections>
                                         </comboBox>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X1e-EQ-HTf">
                                             <rect key="frame" x="91" y="138" width="61" height="17"/>

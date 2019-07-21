@@ -59,15 +59,7 @@ class VesselDowntimeViewController: NSTabViewController {
     var saveDataTimer = Timer()
     
     var timeFieldFormatter = TimeFieldFormatter()
-    
-    /*var hasEndTime = false {
-        didSet {
-            if hasEndTime {
-                enableTTLCBX()
-            }
-        }
-    }*/
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -230,23 +222,9 @@ class VesselDowntimeViewController: NSTabViewController {
         endTimeComboBox.reloadData()
     }
     
-    /*func enableTTLCBX() {
-        totalTimeComboBox.isEnabled = true
-    }*/
-    
     func enableAddDowntimeButton() {
         addDowntimeButton.isEnabled = true
     }
-    
-    /*@IBAction func endTimeDoneEditing(_ sender: Any) {
-        
-        if endTimeComboBox.stringValue.length == 4 && endTimeComboBox.stringValue.isNumeric {
-            totalTimes.getTotalTimes(start: startTimeComboBox.stringValue, end: endTimeComboBox.stringValue)
-            hasEndTime = true
-        }
-        
-        totalTimeComboBox.reloadData()
-    }*/
     
     func contentIsValid(cbx: NSComboBox) -> Bool {
         if cbx.stringValue.length == 4 && cbx.stringValue.isNumeric {
