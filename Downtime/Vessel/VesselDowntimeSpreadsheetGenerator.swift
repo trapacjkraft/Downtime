@@ -49,12 +49,16 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
     
     var report = [String]()
     
-    var totalMech = 0.0
-    var totalOp = 0.0
-    var totalEStop = 0.0
-    var totalSys = 0.0
-    var totalDead = 0.0
+    var totalMech = NSDecimalNumber.zero
+    var totalOp = NSDecimalNumber.zero
+    var totalEStop = NSDecimalNumber.zero
+    var totalSys = NSDecimalNumber.zero
+    var totalDead = NSDecimalNumber.zero
     
+    let roundingBehavior = NSDecimalNumberHandler(roundingMode: .plain, scale: 1, raiseOnExactness: false, raiseOnOverflow: false, raiseOnUnderflow: false, raiseOnDivideByZero: true)
+    
+    let locale = NSLocale.autoupdatingCurrent
+
     let emptyLine = ",\"\",,,,,\n"
     
     let exportDirectory: String = NSHomeDirectory() + "/Documents/"
@@ -121,15 +125,15 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
                         switch entry["category"]! {
                             
                         case "Mechanical":
-                            totalMech += Double(entry["totalTime"]!)!
+                            totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "Operational Scenario":
-                            totalOp += Double(entry["totalTime"]!)!
+                            totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "E-Stop":
-                            totalEStop += Double(entry["totalTime"]!)!
+                            totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "System / Tech":
-                            totalSys += Double(entry["totalTime"]!)!
+                            totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "Deadtime":
-                            totalDead += Double(entry["totalTime"]!)!
+                            totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         default:
                             break   //should not be reached
                         }
@@ -175,15 +179,15 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
                         
                         switch entry["category"]! {
                         case "Mechanical":
-                            totalMech += Double(entry["totalTime"]!)!
+                            totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "Operational Scenario":
-                            totalOp += Double(entry["totalTime"]!)!
+                            totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "E-Stop":
-                            totalEStop += Double(entry["totalTime"]!)!
+                            totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "System / Tech":
-                            totalSys += Double(entry["totalTime"]!)!
+                            totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "Deadtime":
-                            totalDead += Double(entry["totalTime"]!)!
+                            totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         default:
                             break   //should not be reached
                         }
@@ -194,15 +198,28 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
             }
         }
         
-        let totalDowntime = totalMech + totalOp + totalEStop + totalSys + totalDead
+        var totalDowntime = NSDecimalNumber.zero
+        totalDowntime = totalDowntime.adding(totalMech)
+        totalDowntime = totalDowntime.adding(totalOp)
+        totalDowntime = totalDowntime.adding(totalEStop)
+        totalDowntime = totalDowntime.adding(totalSys)
+        totalDowntime = totalDowntime.adding(totalDead)
         
-        report.append("Total Operational,\(String(totalOp)),Hours,,\n")
-        report.append("Total System/Tech,\(String(totalSys)),Hours,,\n")
-        report.append("Total E-Stop Time,\(String(totalEStop)),Hours,,\n")
-        report.append("Total Mechanical,\(String(totalMech)),Hours,,\n")
-        report.append("Total Deadtime,\(String(totalDead)),Hours,,\n")
+        let mechString = totalMech.description(withLocale: locale)
+        let opString = totalOp.description(withLocale: locale)
+        let estopString = totalEStop.description(withLocale: locale)
+        let sysString = totalSys.description(withLocale: locale)
+        let deadString = totalDead.description(withLocale: locale)
+        
+        let totalString = totalDowntime.description(withLocale: locale)
+
+        report.append("Total Mechanical,\(mechString),Hours,,\n")
+        report.append("Total Operational,\(opString),Hours,,\n")
+        report.append("Total E-Stop Time,\(estopString),Hours,,\n")
+        report.append("Total System/Tech,\(sysString),Hours,,\n")
+        report.append("Total Deadtime,\(deadString),Hours,,\n")
         report.append(emptyLine)
-        report.append("Total Downtime,\(String(totalDowntime)),Hours,,\n")
+        report.append("Total Downtime,\(totalString),Hours,,\n")
 
         openFile()
     }

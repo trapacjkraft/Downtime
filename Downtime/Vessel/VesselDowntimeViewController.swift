@@ -59,7 +59,7 @@ class VesselDowntimeViewController: NSTabViewController {
     var saveDataTimer = Timer()
     
     var timeFieldFormatter = TimeFieldFormatter()
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -327,19 +327,47 @@ class VesselDowntimeViewController: NSTabViewController {
         spreadsheetGeneratorButton.isEnabled = true
     }
     
+    func tableContentIsValidForExport() -> Bool {
+        
+        for entry in downtimeEntries {
+            guard entry["startTime"]!.count == 4 && entry["startTime"]!.isNumeric else { return false }
+            guard entry["endTime"]!.count == 4 && entry["endTime"]!.isNumeric else { return false }
+            guard !entry["downtimeReason"]!.isEmpty else { return false }
+            guard !entry["totalTime"]!.isEmpty else { return false }
+            guard !entry["category"]!.isEmpty else { return false }
+        }
+        
+        return true
+    }
+    
     @IBAction func generateTextReport(_ sender: Any) {
-        if dayShiftRadioButton.state == .on {
-            textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
-        } else if nightShiftRadioButton.state == .on {
-            textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+        if tableContentIsValidForExport() {
+            if dayShiftRadioButton.state == .on {
+                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
+            } else if nightShiftRadioButton.state == .on {
+                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+            }
+        } else {
+            let alert = NSAlert()
+            alert.messageText = "Missing values!"
+            alert.informativeText = "You are missing values for one or more downtime entries. Please check the downtime you've entered and make sure you have all values entered before exporting."
+            alert.runModal()
         }
     }
     
     @IBAction func generateSpreadsheet(_ sender: Any) {
-        if dayShiftRadioButton.state == .on {
-            spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
-        } else if nightShiftRadioButton.state == .on {
-            spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+        
+        if tableContentIsValidForExport() {
+            if dayShiftRadioButton.state == .on {
+                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
+            } else if nightShiftRadioButton.state == .on {
+                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+            }
+        } else {
+            let alert = NSAlert()
+            alert.messageText = "Missing values!"
+            alert.informativeText = "You are missing values for one or more downtime entries. Please check the downtime you've entered and make sure you have all values entered before exporting."
+            alert.runModal()
         }
     }
     

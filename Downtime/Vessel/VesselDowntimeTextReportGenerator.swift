@@ -49,11 +49,15 @@ class VesselDowntimeTextReportGenerator: NSObject {
     
     var report = NSMutableAttributedString()
     
-    var totalMech = 0.0
-    var totalOp = 0.0
-    var totalEStop = 0.0
-    var totalSys = 0.0
-    var totalDead = 0.0
+    var totalMech = NSDecimalNumber.zero
+    var totalOp = NSDecimalNumber.zero
+    var totalEStop = NSDecimalNumber.zero
+    var totalSys = NSDecimalNumber.zero
+    var totalDead = NSDecimalNumber.zero
+    
+    let roundingBehavior = NSDecimalNumberHandler(roundingMode: .plain, scale: 1, raiseOnExactness: false, raiseOnOverflow: false, raiseOnUnderflow: false, raiseOnDivideByZero: true)
+    
+    let locale = NSLocale.autoupdatingCurrent
 
     let emptyLine = NSAttributedString(string: "\n")
     
@@ -152,15 +156,15 @@ class VesselDowntimeTextReportGenerator: NSObject {
                         switch entry["category"]! {
                             
                         case "Mechanical":
-                            totalMech += Double(entry["totalTime"]!)!
+                            totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "Operational Scenario":
-                            totalOp += Double(entry["totalTime"]!)!
+                            totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "E-Stop":
-                            totalEStop += Double(entry["totalTime"]!)!
+                            totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "System / Tech":
-                            totalSys += Double(entry["totalTime"]!)!
+                            totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "Deadtime":
-                            totalDead += Double(entry["totalTime"]!)!
+                            totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         default:
                             break   //should not be reached
                         }
@@ -241,15 +245,15 @@ class VesselDowntimeTextReportGenerator: NSObject {
                         switch entry["category"]! {
                             
                         case "Mechanical":
-                            totalMech += Double(entry["totalTime"]!)!
+                            totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "Operational Scenario":
-                            totalOp += Double(entry["totalTime"]!)!
+                            totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "E-Stop":
-                            totalEStop += Double(entry["totalTime"]!)!
+                            totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "System / Tech":
-                            totalSys += Double(entry["totalTime"]!)!
+                            totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         case "Deadtime":
-                            totalDead += Double(entry["totalTime"]!)!
+                            totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                         default:
                             break   //should not be reached
                         }
@@ -265,15 +269,28 @@ class VesselDowntimeTextReportGenerator: NSObject {
             }
         }
         
-        let totalDowntime = totalMech + totalOp + totalEStop + totalSys + totalDead
-
-        report.append(NSAttributedString(string: "Total Mechanical\t\(String(totalMech)) Hours\n"))
-        report.append(NSAttributedString(string: "Total Operational\t\(String(totalOp)) Hours\n"))
-        report.append(NSAttributedString(string: "Total E-Stop Time\t\(String(totalEStop)) Hours\n"))
-        report.append(NSAttributedString(string: "Total System/Tech\t\(String(totalSys)) Hours\n"))
-        report.append(NSAttributedString(string: "Total Deadtime\t\t\(String(totalDead)) Hours\n"))
+        var totalDowntime = NSDecimalNumber.zero
+        totalDowntime = totalDowntime.adding(totalMech)
+        totalDowntime = totalDowntime.adding(totalOp)
+        totalDowntime = totalDowntime.adding(totalEStop)
+        totalDowntime = totalDowntime.adding(totalSys)
+        totalDowntime = totalDowntime.adding(totalDead)
+        
+        let mechString = totalMech.description(withLocale: locale)
+        let opString = totalOp.description(withLocale: locale)
+        let estopString = totalEStop.description(withLocale: locale)
+        let sysString = totalSys.description(withLocale: locale)
+        let deadString = totalDead.description(withLocale: locale)
+        
+        let totalString = totalDowntime.description(withLocale: locale)
+        
+        report.append(NSAttributedString(string: "Total Mechanical\t\(mechString) Hours\n"))
+        report.append(NSAttributedString(string: "Total Operational\t\(opString) Hours\n"))
+        report.append(NSAttributedString(string: "Total E-Stop Time\t\(estopString) Hours\n"))
+        report.append(NSAttributedString(string: "Total System/Tech\t\(sysString) Hours\n"))
+        report.append(NSAttributedString(string: "Total Deadtime\t\t\(deadString) Hours\n"))
         report.append(emptyLine)
-        report.append(NSAttributedString(string: "Total Downtime\t\t\(String(totalDowntime)) Hours\n"))
+        report.append(NSAttributedString(string: "Total Downtime\t\t\(totalString) Hours\n"))
         
         openFile()
     }
