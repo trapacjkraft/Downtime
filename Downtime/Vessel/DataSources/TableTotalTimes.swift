@@ -31,9 +31,7 @@ class TableTotalTimes: NSObject, NSComboBoxDataSource, NSComboBoxDelegate {
         }
         
         endTime = String(endingHour!) + endingMinutes
-        
-        Swift.print(endTime)
-        
+                
         let start = Int(startTime)
         let end = Int(endTime)
         

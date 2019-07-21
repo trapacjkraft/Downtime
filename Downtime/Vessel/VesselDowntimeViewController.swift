@@ -117,7 +117,6 @@ class VesselDowntimeViewController: NSTabViewController {
         
         do {
             try fileContents.write(to: URL(fileURLWithPath: destination), atomically: true, encoding: .utf8)
-            //Swift.print("Session data saved to \(destination)")
         } catch {
             Swift.print(error)
         }
@@ -134,7 +133,7 @@ class VesselDowntimeViewController: NSTabViewController {
                 let fileAttributes = try fm.attributesOfItem(atPath: loadPath) as [FileAttributeKey:Any]
                 fileCreationDate = fileAttributes[FileAttributeKey.creationDate] as! Date
             } catch {
-                Swift.print("error")
+                Swift.print(error)
             }
             
             let now = Date()
@@ -174,9 +173,8 @@ class VesselDowntimeViewController: NSTabViewController {
             } else {
                 do {
                     try fm.removeItem(at: URL(fileURLWithPath: loadPath))
-                    Swift.print("Session data older than eight hours has been removed.")
                 } catch {
-                    Swift.print("error")
+                    Swift.print(error)
                 }
             }
         

@@ -317,7 +317,6 @@ class VesselDowntimeTextReportGenerator: NSObject {
         
         do {
             contents = try report.data(from: NSMakeRange(0, report.length), documentAttributes: docAttributes)
-            Swift.print("X")
         } catch {
             Swift.print(error)
         }

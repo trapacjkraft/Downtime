@@ -35,9 +35,7 @@ class EnteredTotalTimes: NSObject, NSComboBoxDataSource {
         }
         
         endTime = String(endingHour!) + endingMinutes
-        
-        Swift.print(endTime)
-        
+                
         let start = Int(startTime)
         let end = Int(endTime)
         
