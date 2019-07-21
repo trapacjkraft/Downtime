@@ -34,6 +34,7 @@ class VesselDowntimeViewController: NSTabViewController {
     let textReportGenerator = VesselDowntimeTextReportGenerator()
     
     let selectionChangedNotication = NSTableView.selectionDidChangeNotification
+    let popupWillAppearNotification = NSComboBox.willPopUpNotification
     
     let nc = NotificationCenter.default
     let fm = FileManager.default
@@ -55,14 +56,17 @@ class VesselDowntimeViewController: NSTabViewController {
     }
     
     var dateFetcherTimer = Timer()
+    var saveDataTimer = Timer()
     
-    var hasEndTime = false {
+    var timeFieldFormatter = TimeFieldFormatter()
+    
+    /*var hasEndTime = false {
         didSet {
             if hasEndTime {
                 enableTTLCBX()
             }
         }
-    }
+    }*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,10 +77,12 @@ class VesselDowntimeViewController: NSTabViewController {
         
         startTimeComboBox.usesDataSource = true
         startTimeComboBox.dataSource = startTimes
+        startTimeComboBox.formatter = timeFieldFormatter
         startTimeComboBox.reloadData()
         
         endTimeComboBox.usesDataSource = true
         endTimeComboBox.dataSource = endTimes
+        endTimeComboBox.formatter = timeFieldFormatter
         endTimeComboBox.reloadData()
         
         totalTimeComboBox.usesDataSource = true
@@ -84,8 +90,11 @@ class VesselDowntimeViewController: NSTabViewController {
         totalTimeComboBox.reloadData()
         
         dateFetcherTimer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(updateTimes), userInfo: nil, repeats: true)
+        saveDataTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(saveData), userInfo: nil, repeats: true)
         
         nc.addObserver(self, selector: #selector(enableRemovalButton), name: selectionChangedNotication, object: nil)
+        nc.addObserver(self, selector: #selector(fetchTotalTimes), name: popupWillAppearNotification, object: nil)
+        
         nc.addObserver(self, selector: #selector(saveData), name: NSApplication.willTerminateNotification, object: nil)
         nc.addObserver(self, selector: #selector(loadData), name: NSApplication.didFinishLaunchingNotification, object: nil)
         
@@ -116,7 +125,7 @@ class VesselDowntimeViewController: NSTabViewController {
         
         do {
             try fileContents.write(to: URL(fileURLWithPath: destination), atomically: true, encoding: .utf8)
-            Swift.print("Session data saved to \(destination)")
+            //Swift.print("Session data saved to \(destination)")
         } catch {
             Swift.print(error)
         }
@@ -221,15 +230,15 @@ class VesselDowntimeViewController: NSTabViewController {
         endTimeComboBox.reloadData()
     }
     
-    func enableTTLCBX() {
+    /*func enableTTLCBX() {
         totalTimeComboBox.isEnabled = true
-    }
+    }*/
     
     func enableAddDowntimeButton() {
         addDowntimeButton.isEnabled = true
     }
     
-    @IBAction func endTimeDoneEditing(_ sender: Any) {
+    /*@IBAction func endTimeDoneEditing(_ sender: Any) {
         
         if endTimeComboBox.stringValue.length == 4 && endTimeComboBox.stringValue.isNumeric {
             totalTimes.getTotalTimes(start: startTimeComboBox.stringValue, end: endTimeComboBox.stringValue)
@@ -237,6 +246,18 @@ class VesselDowntimeViewController: NSTabViewController {
         }
         
         totalTimeComboBox.reloadData()
+    }*/
+    
+    func contentIsValid(cbx: NSComboBox) -> Bool {
+        if cbx.stringValue.length == 4 && cbx.stringValue.isNumeric {
+            return true
+        } else { return false }
+    }
+    
+    @objc func fetchTotalTimes() {
+        if contentIsValid(cbx: startTimeComboBox) && contentIsValid(cbx: endTimeComboBox) {
+            totalTimes.getTotalTimes(start: startTimeComboBox.stringValue, end: endTimeComboBox.stringValue)
+        }
     }
     
     @IBAction func addDowntimeEntry(_ sender: Any) {

@@ -68,6 +68,10 @@ class EnteredTotalTimes: NSObject, NSComboBoxDataSource {
     }
     
     func comboBox(_ comboBox: NSComboBox, objectValueForItemAt index: Int) -> Any? {
+        
+        if times.count == 0 {
+            return 0
+        }
         return times[index]
     }
 

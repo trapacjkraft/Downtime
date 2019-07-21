@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		420875FC22E40F8900DF0278 /* TimeFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */; };
 		426A436022AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */; };
 		426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */; };
 		42ADA65922A659F400689489 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42ADA65822A659F400689489 /* AppDelegate.swift */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFieldFormatter.swift; sourceTree = "<group>"; };
 		426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeSpreadsheetGenerator.swift; sourceTree = "<group>"; };
 		426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeTextReportGenerator.swift; sourceTree = "<group>"; };
 		42ADA65522A659F400689489 /* Downtime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Downtime.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +54,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		420875FA22E40F5600DF0278 /* Supporting Classes */ = {
+			isa = PBXGroup;
+			children = (
+				420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */,
+			);
+			path = "Supporting Classes";
+			sourceTree = "<group>";
+		};
 		42ADA64C22A659F400689489 = {
 			isa = PBXGroup;
 			children = (
@@ -88,8 +98,9 @@
 				42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */,
 				426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */,
 				426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */,
+				420875FA22E40F5600DF0278 /* Supporting Classes */,
 				42E8C5E322ACC88500544392 /* DataSources */,
-				42F32DC922B4DBEC00976FFC /* TableView Supporting Files */,
+				42F32DC922B4DBEC00976FFC /* TableView Supporting Classes */,
 			);
 			path = Vessel;
 			sourceTree = "<group>";
@@ -105,13 +116,13 @@
 			path = DataSources;
 			sourceTree = "<group>";
 		};
-		42F32DC922B4DBEC00976FFC /* TableView Supporting Files */ = {
+		42F32DC922B4DBEC00976FFC /* TableView Supporting Classes */ = {
 			isa = PBXGroup;
 			children = (
 				42F32DCA22B4DC0800976FFC /* CategoryComboTableCellView.swift */,
 				42F32DCE22B4E4CA00976FFC /* TotalTimesTableCellView.swift */,
 			);
-			path = "TableView Supporting Files";
+			path = "TableView Supporting Classes";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -194,6 +205,7 @@
 				42F32DCF22B4E4CA00976FFC /* TotalTimesTableCellView.swift in Sources */,
 				42F32DCB22B4DC0800976FFC /* CategoryComboTableCellView.swift in Sources */,
 				42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */,
+				420875FC22E40F8900DF0278 /* TimeFieldFormatter.swift in Sources */,
 				426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
