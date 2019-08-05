@@ -841,6 +841,7 @@
                                                     <string>E-Stop</string>
                                                     <string>System / Tech</string>
                                                     <string>Deadtime</string>
+                                                    <string>Note</string>
                                                 </objectValues>
                                             </comboBoxCell>
                                             <connections>

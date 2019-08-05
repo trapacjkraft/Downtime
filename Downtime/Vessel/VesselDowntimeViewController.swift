@@ -234,6 +234,7 @@ class VesselDowntimeViewController: NSTabViewController {
         if contentIsValid(cbx: startTimeComboBox) && contentIsValid(cbx: endTimeComboBox) {
             totalTimes.getTotalTimes(start: startTimeComboBox.stringValue, end: endTimeComboBox.stringValue)
         }
+        totalTimeComboBox.reloadData()
     }
     
     @IBAction func addDowntimeEntry(_ sender: Any) {
@@ -299,6 +300,11 @@ class VesselDowntimeViewController: NSTabViewController {
         if let columnIdentifier: String = sender.superview?.identifier?.rawValue {
             if selectedRow != -1 {
                 downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: columnIdentifier)
+                
+                if columnIdentifier == "startTime" {
+                    downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: "sortTime")
+                }
+                
             }
         }
     }
