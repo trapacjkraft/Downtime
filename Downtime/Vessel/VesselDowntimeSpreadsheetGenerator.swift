@@ -11,8 +11,36 @@ import Cocoa
 class VesselDowntimeSpreadsheetGenerator: NSObject {
 
     var allDowntimeEntries = [[String: String]]()
+    var blankNotes = [[String: String]]()
     
     var sortedDowntimeEntries: [String: [[String: String]]] = [
+        "0000":[[:]],
+        "0100":[[:]],
+        "0200":[[:]],
+        "0300":[[:]],
+        "0400":[[:]],
+        "0500":[[:]],
+        "0600":[[:]],
+        "0700":[[:]],
+        "0800":[[:]],
+        "0900":[[:]],
+        "1000":[[:]],
+        "1100":[[:]],
+        "1200":[[:]],
+        "1300":[[:]],
+        "1400":[[:]],
+        "1500":[[:]],
+        "1600":[[:]],
+        "1700":[[:]],
+        "1800":[[:]],
+        "1900":[[:]],
+        "2000":[[:]],
+        "2100":[[:]],
+        "2200":[[:]],
+        "2300":[[:]]
+    ]
+    
+    var timedNotes: [String: [[String: String]]] = [
         "0000":[[:]],
         "0100":[[:]],
         "0200":[[:]],
@@ -77,10 +105,19 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
     
     func sortDowntimeEntries() {
         for entry in allDowntimeEntries {
-            let startingHour = entry["startTime"]!.substring(toIndex: (entry["startTime"]!.length - 2))
-            sortedDowntimeEntries[sortedDowntimeKeyForValue[startingHour]!]?.append(entry)
+            if entry.isANote() {
+                if entry.hasStartTime() {
+                    let startingHour = entry["startTime"]!.substring(toIndex: (entry["startTime"]!.length - 2))
+                    timedNotes[sortedDowntimeKeyForValue[startingHour]!]?.append(entry)
+                } else if !entry.hasStartTime() && !entry.hasEndTime() {
+                    blankNotes.append(entry)
+                }
+            } else {
+                let startingHour = entry["startTime"]!.substring(toIndex: (entry["startTime"]!.length - 2))
+                sortedDowntimeEntries[sortedDowntimeKeyForValue[startingHour]!]?.append(entry)
+            }
         }
-        
+
         generateReport()
     }
     

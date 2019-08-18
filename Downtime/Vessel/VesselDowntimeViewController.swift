@@ -42,9 +42,16 @@ class VesselDowntimeViewController: NSTabViewController {
     var downtimeEntries = [[String: String]]() {
         didSet {
             downtimeEntries = downtimeEntries.sorted(by: {
-                if $0["sortTime"]! != $1["sortTime"]! {
+                
+                if $0.isANote() && $0["sortTime"]!.isEmpty && $0["endTime"]!.isEmpty { //If entry is a note with no times, sort to the end of the table
+                    return false
+                } else if $1.isANote() && $1["sortTime"]!.isEmpty && $1["endTime"]!.isEmpty { //If entry is a note with no times, sort to the end of the table
+                    return true
+                }
+                
+                if $0["sortTime"]! != $1["sortTime"]! {  //If sort times (start times) are not the same, sort by start time
                     return $0["sortTime"]! < $1["sortTime"]!
-                } else {
+                } else { //If sort times are the same, sort by end time
                     return $0["endTime"]! < $1["endTime"]!
                 }
             })
@@ -59,6 +66,7 @@ class VesselDowntimeViewController: NSTabViewController {
     var saveDataTimer = Timer()
     
     var timeFieldFormatter = TimeFieldFormatter()
+    var reasonFieldFormatter = ReasonFieldFormatter()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,6 +85,8 @@ class VesselDowntimeViewController: NSTabViewController {
         endTimeComboBox.formatter = timeFieldFormatter
         endTimeComboBox.reloadData()
         
+        downtimeReasonField.formatter = reasonFieldFormatter
+        
         totalTimeComboBox.usesDataSource = true
         totalTimeComboBox.dataSource = totalTimes
         totalTimeComboBox.reloadData()
@@ -90,6 +100,13 @@ class VesselDowntimeViewController: NSTabViewController {
         nc.addObserver(self, selector: #selector(saveData), name: NSApplication.willTerminateNotification, object: nil)
         nc.addObserver(self, selector: #selector(loadData), name: NSApplication.didFinishLaunchingNotification, object: nil)
         
+        nc.addObserver(self, selector: #selector(selectMechanical), name: .entryIsMechanical, object: nil)
+        nc.addObserver(self, selector: #selector(selectOperational), name: .entryIsOperational, object: nil)
+        nc.addObserver(self, selector: #selector(selectEStop), name: .entryIsEStop, object: nil)
+        nc.addObserver(self, selector: #selector(selectSystem), name: .entryIsSystem, object: nil)
+        nc.addObserver(self, selector: #selector(selectDeadtime), name: .entryIsDeadtime, object: nil)
+        nc.addObserver(self, selector: #selector(selectNote), name: .entryIsNote, object: nil)
+        nc.addObserver(self, selector: #selector(deselectCategory), name: .entryIsNotPrefixed, object: nil)
     }
     
     @objc func saveData() {
@@ -184,6 +201,41 @@ class VesselDowntimeViewController: NSTabViewController {
         
     }
     
+    @objc func selectMechanical() {
+        categoryComboBox.selectItem(at: 0)
+        categorySelected(categoryComboBox)
+    }
+    
+    @objc func selectOperational() {
+        categoryComboBox.selectItem(at: 1)
+        categorySelected(categoryComboBox)
+    }
+    
+    @objc func selectEStop() {
+        categoryComboBox.selectItem(at: 2)
+        categorySelected(categoryComboBox)
+    }
+    
+    @objc func selectSystem() {
+        categoryComboBox.selectItem(at: 3)
+        categorySelected(categoryComboBox)
+    }
+    
+    @objc func selectDeadtime() {
+        categoryComboBox.selectItem(at: 4)
+        categorySelected(categoryComboBox)
+    }
+    
+    @objc func selectNote() {
+        categoryComboBox.selectItem(at: 5)
+        categorySelected(categoryComboBox)
+    }
+    
+    @objc func deselectCategory() {
+        categoryComboBox.deselectItem(at: categoryComboBox.indexOfSelectedItem)
+        categorySelected(categoryComboBox)
+    }
+    
     func downtimeValuesChangedBetween(newValues: [[String: String]], oldValues: [[String: String]]) -> Bool {
         
         var index = 0
@@ -237,7 +289,37 @@ class VesselDowntimeViewController: NSTabViewController {
         totalTimeComboBox.reloadData()
     }
     
+    func getSortingTime(for time: String) -> String {
+        
+        guard time.length == 4 else { return time }
+        
+        let minutes = time.substring(fromIndex: 2)
+        var hour = Int(time.substring(toIndex: time.length - 2))!
+        
+        if hour >= 0 && hour <= 7 {
+            hour += 24
+        }
+        
+        var strHour = String(hour)
+        if strHour.length == 1 {
+            strHour.insert("0", at: String.Index.init(utf16Offset: 0, in: strHour))
+        }
+        
+        let sortTime = strHour + minutes
+        
+        return sortTime
+    }
+    
     @IBAction func addDowntimeEntry(_ sender: Any) {
+        
+        let prefixes: [String: String] = [
+            "Mechanical":"#mech",
+            "Operational Scenario":"#op",
+            "E-Stop":"#estop",
+            "System / Tech":"#sys",
+            "Deadtime":"#dead",
+            "Note":"#note"
+        ]
         
         var entry: [String: String] = [
             "startTime":"",
@@ -248,47 +330,97 @@ class VesselDowntimeViewController: NSTabViewController {
             "category":""
         ]
         
+        if !categoryComboBox.stringValue.isEmpty {
+            entry.updateValue(categoryComboBox.stringValue, forKey: "category")
+        }
+
+        
         if !startTimeComboBox.stringValue.isEmpty {
             entry.updateValue(startTimeComboBox.stringValue, forKey: "startTime")
             
-            let minutes = startTimeComboBox.stringValue.substring(fromIndex: 2)
-            var hour = Int(startTimeComboBox.stringValue.substring(toIndex: startTimeComboBox.stringValue.length - 2))!
-            
-            if hour >= 0 && hour <= 7 {
-                hour += 24
+            if entry.isANote() {
+                let hour = startTimeComboBox.stringValue.substring(toIndex: 2)
+                let time = hour + "59"
+                entry.updateValue(time, forKey: "sortTime")
+            } else {
+                entry.updateValue(getSortingTime(for: startTimeComboBox.stringValue), forKey: "sortTime")
             }
-            
-            var strHour = String(hour)
-            if strHour.length == 1 {
-                strHour.insert("0", at: String.Index.init(utf16Offset: 0, in: strHour))
-            }
-            
-            let sortTime = strHour + minutes
-            
-            entry.updateValue(sortTime, forKey: "sortTime")
         }
         
         if endTimeComboBox.stringValue.isEmpty {
-            entry.updateValue("missing", forKey: "endTime")
+            if !entry.isANote() {
+                entry.updateValue("missing", forKey: "endTime")
+            }
         } else {
             entry.updateValue(endTimeComboBox.stringValue, forKey: "endTime")
         }
         
         if !downtimeReasonField.stringValue.isEmpty {
-            entry.updateValue(downtimeReasonField.stringValue, forKey: "downtimeReason")
+            
+            var reason = downtimeReasonField.stringValue
+            
+            if let category = entry["category"] {
+                
+                let prefix = prefixes[category]!
+                
+                switch category {
+                    
+                case "Mechanical":
+                    if reason.lowercased().hasPrefix(prefix) { //If the string contains the prefix category command
+                        let range = reason.lowercased().range(of: prefix)! //Find the range of the prefix
+                        reason.removeSubrange(range) //Remove the range of the prefix
+                        reason = reason.trimmingCharacters(in: .whitespaces) //Remove any possible leading whitespace
+                    }
+                case "Operational Scenario":
+                    if reason.lowercased().hasPrefix(prefix) {
+                        let range = reason.lowercased().range(of: prefix)!
+                        reason.removeSubrange(range)
+                        reason = reason.trimmingCharacters(in: .whitespaces)
+                    }
+                case "E-Stop":
+                    if reason.lowercased().hasPrefix(prefix) {
+                        let range = reason.lowercased().range(of: prefix)!
+                        reason.removeSubrange(range)
+                        reason = reason.trimmingCharacters(in: .whitespaces)
+                    }
+                case "System / Tech":
+                    if reason.lowercased().hasPrefix(prefix) {
+                        let range = reason.lowercased().range(of: prefix)!
+                        reason.removeSubrange(range)
+                        reason = reason.trimmingCharacters(in: .whitespaces)
+                    }
+                case "Deadtime":
+                    if reason.lowercased().hasPrefix(prefix) {
+                        let range = reason.lowercased().range(of: prefix)!
+                        reason.removeSubrange(range)
+                        reason = reason.trimmingCharacters(in: .whitespaces)
+                    }
+                case "Note":
+                    if reason.lowercased().hasPrefix(prefix) {
+                        let range = reason.lowercased().range(of: prefix)!
+                        reason.removeSubrange(range)
+                        reason = reason.trimmingCharacters(in: .whitespaces)
+                    }
+                default:
+                    break //Should not be reached
+                    
+                }
+            }
+            
+            entry.updateValue(reason, forKey: "downtimeReason")
         }
         
         if !totalTimeComboBox.stringValue.isEmpty {
             entry.updateValue(totalTimeComboBox.stringValue, forKey: "totalTime")
         }
         
-        if !categoryComboBox.stringValue.isEmpty {
-            entry.updateValue(categoryComboBox.stringValue, forKey: "category")
-        }
-        
         downtimeEntries.append(entry)
         
         clearBoxes()
+        
+        if entry.isANote() {
+            totalTimeComboBox.isEnabled = true
+        }
         
         addDowntimeButton.keyEquivalent = String("")
     }
@@ -302,20 +434,31 @@ class VesselDowntimeViewController: NSTabViewController {
                 downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: columnIdentifier)
                 
                 if columnIdentifier == "startTime" {
-                    downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: "sortTime")
+                    downtimeEntries[selectedRow].updateValue(getSortingTime(for: sender.stringValue), forKey: "sortTime")
                 }
                 
             }
         }
     }
     
-    @IBAction func categorySelected(_ sender: Any) {
+    @IBAction func categorySelected(_ sender: NSComboBox) {
         if !categoryComboBox.stringValue.isEmpty {
             
             let array = [unichar(NSCarriageReturnCharacter)]
             addDowntimeButton.keyEquivalent = String(utf16CodeUnits: array, count: 1)
             
         }
+        
+        if categoryComboBox.stringValue == "Note" {
+            if totalTimeComboBox.indexOfSelectedItem != -1 {
+                totalTimeComboBox.deselectItem(at: totalTimeComboBox.indexOfSelectedItem)
+            }
+            totalTimeComboBox.isEnabled = false
+        } else if categoryComboBox.indexOfSelectedItem == -1 || categoryComboBox.stringValue != "Note" {
+            totalTimeComboBox.isEnabled = true
+        }
+        
+        
     }
     
     func clearBoxes() {
@@ -334,10 +477,14 @@ class VesselDowntimeViewController: NSTabViewController {
     func tableContentIsValidForExport() -> Bool {
         
         for entry in downtimeEntries {
-            guard entry["startTime"]!.count == 4 && entry["startTime"]!.isNumeric else { return false }
-            guard entry["endTime"]!.count == 4 && entry["endTime"]!.isNumeric else { return false }
+            
+            if !entry.isANote() {
+                guard entry["startTime"]!.count == 4 && entry["startTime"]!.isNumeric else { return false }
+                guard entry["endTime"]!.count == 4 && entry["endTime"]!.isNumeric else { return false }
+                guard !entry["totalTime"]!.isEmpty else { return false }
+            }
+            
             guard !entry["downtimeReason"]!.isEmpty else { return false }
-            guard !entry["totalTime"]!.isEmpty else { return false }
             guard !entry["category"]!.isEmpty else { return false }
         }
         

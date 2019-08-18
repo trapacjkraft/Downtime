@@ -89,6 +89,36 @@ extension String {
     
 }
 
+extension Dictionary where Key == String, Value == String {
+    
+    func hasStartTime() -> Bool {
+        if !self["startTime"]!.isEmpty {
+            return true
+        } else { return false }
+    }
+    
+    func hasEndTime() -> Bool {
+        if !self["endTime"]!.isEmpty {
+            return true
+        } else { return false }
+    }
+    
+    func isANote() -> Bool {
+        if self["category"] == "Note" {
+            return true
+        } else { return false }
+    }
+}
+
+extension Notification.Name {
+    static let entryIsNotPrefixed = Notification.Name("entryIsNotPrefixed")
+    static let entryIsMechanical = Notification.Name("entryIsMechanical")
+    static let entryIsOperational = Notification.Name("entryIsOperational")
+    static let entryIsEStop = Notification.Name("entryIsEStop")
+    static let entryIsSystem = Notification.Name("entryIsSystem")
+    static let entryIsDeadtime = Notification.Name("entryIsDeadtime")
+    static let entryIsNote = Notification.Name("entryIsNote")
+}
 
 class SharedCode: NSObject {
 

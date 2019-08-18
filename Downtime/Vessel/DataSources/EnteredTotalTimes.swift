@@ -16,11 +16,7 @@ class EnteredTotalTimes: NSObject, NSComboBoxDataSource {
     var endTime = String()
         
     func getTotalTimes(start: String, end: String) {
-        
-        if startTime.length != endTime.length {
-            return
-        }
-        
+                
         times.removeAll()
         
         startTime = start

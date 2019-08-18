@@ -8,12 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		420875FC22E40F8900DF0278 /* TimeFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */; };
+		421C222A23091135002DBCEF /* Calibri.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 421C222823091134002DBCEF /* Calibri.ttf */; };
+		421C222B23091135002DBCEF /* Calibrib.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 421C222923091135002DBCEF /* Calibrib.ttf */; };
 		426A436022AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */; };
 		426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */; };
 		42ADA65922A659F400689489 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42ADA65822A659F400689489 /* AppDelegate.swift */; };
 		42ADA65B22A659F400689489 /* VesselDowntimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */; };
 		42ADA65D22A659F500689489 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 42ADA65C22A659F500689489 /* Assets.xcassets */; };
 		42ADA66022A659F500689489 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 42ADA65E22A659F500689489 /* Main.storyboard */; };
+		42D07B962307A43300FAE867 /* ReasonFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D07B952307A43300FAE867 /* ReasonFieldFormatter.swift */; };
 		42E8C5E122ACBCB500544392 /* SharedCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E022ACBCB500544392 /* SharedCode.swift */; };
 		42E8C5E522ACC8B100544392 /* StartTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E422ACC8B100544392 /* StartTimes.swift */; };
 		42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E622ACD22E00544392 /* EndTimes.swift */; };
@@ -25,6 +28,8 @@
 
 /* Begin PBXFileReference section */
 		420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFieldFormatter.swift; sourceTree = "<group>"; };
+		421C222823091134002DBCEF /* Calibri.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Calibri.ttf; sourceTree = "<group>"; };
+		421C222923091135002DBCEF /* Calibrib.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Calibrib.ttf; sourceTree = "<group>"; };
 		426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeSpreadsheetGenerator.swift; sourceTree = "<group>"; };
 		426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeTextReportGenerator.swift; sourceTree = "<group>"; };
 		42ADA65522A659F400689489 /* Downtime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Downtime.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -34,6 +39,7 @@
 		42ADA65F22A659F500689489 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		42ADA66122A659F500689489 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		42ADA66222A659F500689489 /* Downtime.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Downtime.entitlements; sourceTree = "<group>"; };
+		42D07B952307A43300FAE867 /* ReasonFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReasonFieldFormatter.swift; sourceTree = "<group>"; };
 		42E8C5E022ACBCB500544392 /* SharedCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCode.swift; sourceTree = "<group>"; };
 		42E8C5E422ACC8B100544392 /* StartTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTimes.swift; sourceTree = "<group>"; };
 		42E8C5E622ACD22E00544392 /* EndTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndTimes.swift; sourceTree = "<group>"; };
@@ -58,8 +64,18 @@
 			isa = PBXGroup;
 			children = (
 				420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */,
+				42D07B952307A43300FAE867 /* ReasonFieldFormatter.swift */,
 			);
 			path = "Supporting Classes";
+			sourceTree = "<group>";
+		};
+		421C222523091115002DBCEF /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				421C222823091134002DBCEF /* Calibri.ttf */,
+				421C222923091135002DBCEF /* Calibrib.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		42ADA64C22A659F400689489 = {
@@ -84,6 +100,7 @@
 				42ADA65822A659F400689489 /* AppDelegate.swift */,
 				42E8C5E022ACBCB500544392 /* SharedCode.swift */,
 				42E8C5E222ACC87500544392 /* Vessel */,
+				421C222523091115002DBCEF /* Fonts */,
 				42ADA65C22A659F500689489 /* Assets.xcassets */,
 				42ADA65E22A659F500689489 /* Main.storyboard */,
 				42ADA66122A659F500689489 /* Info.plist */,
@@ -183,7 +200,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				421C222B23091135002DBCEF /* Calibrib.ttf in Resources */,
 				42ADA65D22A659F500689489 /* Assets.xcassets in Resources */,
+				421C222A23091135002DBCEF /* Calibri.ttf in Resources */,
 				42ADA66022A659F500689489 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -206,6 +225,7 @@
 				42F32DCB22B4DC0800976FFC /* CategoryComboTableCellView.swift in Sources */,
 				42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */,
 				420875FC22E40F8900DF0278 /* TimeFieldFormatter.swift in Sources */,
+				42D07B962307A43300FAE867 /* ReasonFieldFormatter.swift in Sources */,
 				426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

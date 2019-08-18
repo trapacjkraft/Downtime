@@ -11,6 +11,7 @@ import Cocoa
 class VesselDowntimeTextReportGenerator: NSObject {
     
     var allDowntimeEntries = [[String: String]]()
+    var blankNotes = [[String: String]]()
     
     var sortedDowntimeEntries: [String: [[String: String]]] = [
         "0000":[[:]],
@@ -39,6 +40,33 @@ class VesselDowntimeTextReportGenerator: NSObject {
         "2300":[[:]]
     ]
     
+    var timedNotes: [String: [[String: String]]] = [
+        "0000":[[:]],
+        "0100":[[:]],
+        "0200":[[:]],
+        "0300":[[:]],
+        "0400":[[:]],
+        "0500":[[:]],
+        "0600":[[:]],
+        "0700":[[:]],
+        "0800":[[:]],
+        "0900":[[:]],
+        "1000":[[:]],
+        "1100":[[:]],
+        "1200":[[:]],
+        "1300":[[:]],
+        "1400":[[:]],
+        "1500":[[:]],
+        "1600":[[:]],
+        "1700":[[:]],
+        "1800":[[:]],
+        "1900":[[:]],
+        "2000":[[:]],
+        "2100":[[:]],
+        "2200":[[:]],
+        "2300":[[:]]
+    ]
+
     let sortedDowntimeKeyForValue = ["00":"0000", "01":"0100", "02":"0200", "03":"0300", "04":"0400", "05":"0500", "06":"0600", "07":"0700", "08":"0800", "09":"0900", "10":"1000", "11":"1100", "12":"1200", "13":"1300", "14":"1400", "15":"1500", "16":"1600", "17":"1700", "18":"1800", "19":"1900", "20":"2000", "21":"2100", "22":"2200", "23":"2300", "24":"2400"]
     
     let daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700"]
@@ -58,13 +86,11 @@ class VesselDowntimeTextReportGenerator: NSObject {
     let roundingBehavior = NSDecimalNumberHandler(roundingMode: .plain, scale: 1, raiseOnExactness: false, raiseOnOverflow: false, raiseOnUnderflow: false, raiseOnDivideByZero: true)
     
     let locale = NSLocale.autoupdatingCurrent
-
-    let emptyLine = NSAttributedString(string: "\n")
     
     let exportDirectory: String = NSHomeDirectory() + "/Documents/"
 
-    let font = NSFont(name: "Helvetica", size: 12)!
-    let boldFont = NSFont(name: "Helvetica-Bold", size: 12)!
+    let font = NSFont(name: "Calibri", size: 14.5)!
+    let boldFont = NSFont(name: "Calibri-Bold", size: 14.5)!
     
     func getDowntimeEntries(data: [[String: String]], shift: String) {
         allDowntimeEntries = data
@@ -81,13 +107,26 @@ class VesselDowntimeTextReportGenerator: NSObject {
     
     func sortDowntimeEntries() {
         for entry in allDowntimeEntries {
-            let startingHour = entry["startTime"]!.substring(toIndex: (entry["startTime"]!.length - 2))
-            sortedDowntimeEntries[sortedDowntimeKeyForValue[startingHour]!]?.append(entry)
+            if entry.isANote() {
+                if entry.hasStartTime() {
+                    let startingHour = entry["startTime"]!.substring(toIndex: (entry["startTime"]!.length - 2))
+                    timedNotes[sortedDowntimeKeyForValue[startingHour]!]?.append(entry)
+                } else if !entry.hasStartTime() && !entry.hasEndTime() {
+                    blankNotes.append(entry)
+                }
+            } else {
+                let startingHour = entry["startTime"]!.substring(toIndex: (entry["startTime"]!.length - 2))
+                sortedDowntimeEntries[sortedDowntimeKeyForValue[startingHour]!]?.append(entry)
+            }
         }
+        
         generateReport()
     }
 
     func generateReport() {
+        
+        let emptyLine = "\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        
         if isDaysideReport {
             for hour in daysideHours {
                 
@@ -175,8 +214,18 @@ class VesselDowntimeTextReportGenerator: NSObject {
                 }
                 
                 report.append(emptyLine)
-                report.append(emptyLine)
                 
+                
+                for entry in timedNotes[hour]! {
+                    if entry.count > 1 {
+                        let noteLine = entry["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                        noteLine.append(emptyLine)
+                        report.append(noteLine)
+                    }
+                }
+                
+                report.append(emptyLine)
+
             }
         } else if isNightsideReport {
             for hour in nightsideHours {
@@ -264,10 +313,43 @@ class VesselDowntimeTextReportGenerator: NSObject {
                 }
                 
                 report.append(emptyLine)
+                
+                for entry in timedNotes[hour]! {
+                    if entry.count > 1 {
+                        let noteLine = entry["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                        noteLine.append(emptyLine)
+                        report.append(noteLine)
+                    }
+                }
+                
                 report.append(emptyLine)
 
             }
         }
+        
+        let noteHeader = "Notes:".withBoldText(boldPartsOfString: ["Notes:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        noteHeader.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, noteHeader.length))
+        noteHeader.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, noteHeader.length))
+        report.append(noteHeader)
+        report.append(emptyLine)
+        report.append(emptyLine)
+        
+        for note in blankNotes {
+            let noteLine = note["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+            noteLine.append(emptyLine)
+            report.append(noteLine)
+        }
+        
+        report.append(emptyLine)
+        report.append(emptyLine)
+        
+        let totalHeader = "Totals:".withBoldText(boldPartsOfString: ["Totals:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        totalHeader.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, totalHeader.length))
+        totalHeader.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, totalHeader.length))
+        report.append(totalHeader)
+        
+        report.append(emptyLine)
+        report.append(emptyLine)
         
         var totalDowntime = NSDecimalNumber.zero
         totalDowntime = totalDowntime.adding(totalMech)
@@ -284,13 +366,13 @@ class VesselDowntimeTextReportGenerator: NSObject {
         
         let totalString = totalDowntime.description(withLocale: locale)
         
-        report.append(NSAttributedString(string: "Total Mechanical\t\(mechString) Hours\n"))
-        report.append(NSAttributedString(string: "Total Operational\t\(opString) Hours\n"))
-        report.append(NSAttributedString(string: "Total E-Stop Time\t\(estopString) Hours\n"))
-        report.append(NSAttributedString(string: "Total System/Tech\t\(sysString) Hours\n"))
-        report.append(NSAttributedString(string: "Total Deadtime\t\t\(deadString) Hours\n"))
+        report.append("Total Mechanical\t\(mechString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
+        report.append("Total Operational\t\(opString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
+        report.append("Total E-Stop Time\t\(estopString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
+        report.append("Total System/Tech\t\(sysString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
+        report.append("Total Deadtime\t\t\(deadString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
         report.append(emptyLine)
-        report.append(NSAttributedString(string: "Total Downtime\t\t\(totalString) Hours\n"))
+        report.append("Total Downtime\t\t\(totalString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
         
         openFile()
     }
@@ -334,7 +416,13 @@ class VesselDowntimeTextReportGenerator: NSObject {
         for (key, _) in sortedDowntimeEntries {
             sortedDowntimeEntries.updateValue([[:]], forKey: key)
         }
+        
+        for (key, _) in timedNotes {
+            timedNotes.updateValue([[:]], forKey: key)
+        }
 
+        blankNotes.removeAll()
+        
         report = NSMutableAttributedString()
         totalOp = 0.0
         totalSys = 0.0

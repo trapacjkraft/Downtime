@@ -691,7 +691,7 @@
                         <rect key="contentRect" x="196" y="240" width="800" height="508"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
                         <value key="minSize" type="size" width="800" height="508"/>
-                        <value key="maxSize" type="size" width="800" height="508"/>
+                        <value key="maxSize" type="size" width="800" height="1000"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
                         </connections>
@@ -703,56 +703,6 @@
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-15" y="363"/>
-        </scene>
-        <!--Tab View Controller-->
-        <scene sceneID="XJy-C2-2cI">
-            <objects>
-                <tabViewController selectedTabViewItemIndex="0" id="b4U-jU-haK" sceneMemberID="viewController">
-                    <tabViewItems>
-                        <tabViewItem label="Gate" id="g0X-AN-Sd9"/>
-                        <tabViewItem label="Rail" id="JSh-ns-dkd"/>
-                    </tabViewItems>
-                    <tabView key="tabView" type="noTabsNoBorder" id="i37-a9-hf0">
-                        <rect key="frame" x="0.0" y="0.0" width="800" height="547"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <font key="font" metaFont="message"/>
-                        <connections>
-                            <outlet property="delegate" destination="b4U-jU-haK" id="N0u-zB-yUO"/>
-                        </connections>
-                    </tabView>
-                    <connections>
-                        <outlet property="tabView" destination="i37-a9-hf0" id="f86-WD-Nbv"/>
-                        <segue destination="nOn-d0-7EJ" kind="relationship" relationship="tabItems" id="btq-jq-taq"/>
-                        <segue destination="6ku-TI-ft0" kind="relationship" relationship="tabItems" id="bm2-hN-lCU"/>
-                    </connections>
-                </tabViewController>
-                <customObject id="wSd-gm-eMA" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1064" y="1075"/>
-        </scene>
-        <!--Landside Downtime View Controller-->
-        <scene sceneID="ACT-pB-swS">
-            <objects>
-                <viewController title="Landside Downtime View Controller" id="nOn-d0-7EJ" sceneMemberID="viewController">
-                    <view key="view" id="vSk-zT-F9Q">
-                        <rect key="frame" x="0.0" y="0.0" width="800" height="498"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QuV-ML-IVp">
-                                <rect key="frame" x="290" y="240" width="220" height="17"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Landside Downtime View Controller" id="mxR-Bu-zZu">
-                                    <font key="font" usesAppearanceFont="YES"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                        </subviews>
-                    </view>
-                </viewController>
-                <customObject id="my1-W8-n9B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="630" y="1799"/>
         </scene>
         <!--Vessel Downtime View Controller-->
         <scene sceneID="En3-Tp-I56">
@@ -769,19 +719,6 @@
                                     <rect key="frame" x="3" y="3" width="760" height="175"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Tr-hv-I39">
-                                            <rect key="frame" x="316" y="13" width="129" height="32"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="push" title="Add Downtime" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZAI-tr-wvc">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                                <string key="keyEquivalent">r</string>
-                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="addDowntimeEntry:" target="BkR-Mi-9XP" id="krx-P9-tZk"/>
-                                            </connections>
-                                        </button>
                                         <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AoU-t3-OPg">
                                             <rect key="frame" x="20" y="106" width="62" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -831,7 +768,7 @@
                                         <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dxl-cE-1Xb">
                                             <rect key="frame" x="587" y="106" width="156" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" placeholderString="Category..." drawsBackground="YES" numberOfVisibleItems="5" id="xKU-GX-dRE">
+                                            <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" placeholderString="Category..." drawsBackground="YES" numberOfVisibleItems="6" id="xKU-GX-dRE">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -893,12 +830,25 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Tr-hv-I39">
+                                            <rect key="frame" x="316" y="13" width="129" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Add Downtime" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZAI-tr-wvc">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" size="13" name="Calibri"/>
+                                                <string key="keyEquivalent">r</string>
+                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="addDowntimeEntry:" target="BkR-Mi-9XP" id="krx-P9-tZk"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                 </view>
                             </box>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="44" horizontalPageScroll="10" verticalLineScroll="44" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eyp-zR-aHn">
                                 <rect key="frame" x="0.0" y="61" width="800" height="254"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <clipView key="contentView" ambiguous="YES" id="Nen-oX-Uc0">
                                     <rect key="frame" x="1" y="0.0" width="798" height="253"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1074,7 +1024,7 @@
                                                                 <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DIg-pJ-pTf">
                                                                     <rect key="frame" x="3" y="15" width="155" height="26"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" buttonBordered="NO" numberOfVisibleItems="5" id="UH6-Ra-uUR">
+                                                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" buttonBordered="NO" numberOfVisibleItems="6" id="UH6-Ra-uUR">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1084,6 +1034,7 @@
                                                                             <string>E-Stop</string>
                                                                             <string>System / Tech</string>
                                                                             <string>Deadtime</string>
+                                                                            <string>Note</string>
                                                                         </objectValues>
                                                                     </comboBoxCell>
                                                                     <connections>
@@ -1129,9 +1080,8 @@
                                     <action selector="generateSpreadsheet:" target="BkR-Mi-9XP" id="uyt-du-O1q"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeh-ES-jcH">
+                            <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeh-ES-jcH">
                                 <rect key="frame" x="14" y="13" width="153" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Remove Downtime" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T8U-Ds-c3I">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1193,6 +1143,9 @@
                                 </textFieldCell>
                             </textField>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="OzT-4q-gbx" firstAttribute="leading" secondItem="oeh-ES-jcH" secondAttribute="trailing" constant="295" id="UNI-b8-cl0"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="addDowntimeButton" destination="4Tr-hv-I39" id="BhD-Lh-TXO"/>
@@ -1211,31 +1164,7 @@
                 </viewController>
                 <customObject id="s7q-Ei-Bfb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-15" y="1055"/>
-        </scene>
-        <!--Rail Downtime View Controller-->
-        <scene sceneID="94h-uA-Mvj">
-            <objects>
-                <viewController title="Rail Downtime View Controller" id="6ku-TI-ft0" sceneMemberID="viewController">
-                    <view key="view" id="edS-AG-azl">
-                        <rect key="frame" x="0.0" y="0.0" width="800" height="498"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uOL-Ai-Vsk">
-                                <rect key="frame" x="307" y="240" width="187" height="17"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Rail Downtime View Controller" id="3yP-3k-bIN">
-                                    <font key="font" usesAppearanceFont="YES"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                        </subviews>
-                    </view>
-                </viewController>
-                <customObject id="GiK-WT-Mei" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1494" y="1799"/>
+            <point key="canvasLocation" x="-15" y="1105"/>
         </scene>
     </scenes>
 </document>
