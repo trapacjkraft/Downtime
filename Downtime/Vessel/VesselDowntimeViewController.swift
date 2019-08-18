@@ -21,6 +21,7 @@ class VesselDowntimeViewController: NSTabViewController {
     
     @IBOutlet var dayShiftRadioButton: NSButton!
     @IBOutlet var nightShiftRadioButton: NSButton!
+    @IBOutlet var hootShiftRadioButton: NSButton!
     
     @IBOutlet var spreadsheetGeneratorButton: NSButton!
     @IBOutlet var textReportGeneratorButton: NSButton!
@@ -341,7 +342,8 @@ class VesselDowntimeViewController: NSTabViewController {
             if entry.isANote() {
                 let hour = startTimeComboBox.stringValue.substring(toIndex: 2)
                 let time = hour + "59"
-                entry.updateValue(time, forKey: "sortTime")
+                let sortTime = getSortingTime(for: time)
+                entry.updateValue(sortTime, forKey: "sortTime")
             } else {
                 entry.updateValue(getSortingTime(for: startTimeComboBox.stringValue), forKey: "sortTime")
             }
@@ -497,6 +499,8 @@ class VesselDowntimeViewController: NSTabViewController {
                 textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
             } else if nightShiftRadioButton.state == .on {
                 textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+            } else if hootShiftRadioButton.state == .on {
+                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "hoot")
             }
         } else {
             let alert = NSAlert()
@@ -513,6 +517,8 @@ class VesselDowntimeViewController: NSTabViewController {
                 spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
             } else if nightShiftRadioButton.state == .on {
                 spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+            } else if hootShiftRadioButton.state == .on {
+                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "hoot")
             }
         } else {
             let alert = NSAlert()

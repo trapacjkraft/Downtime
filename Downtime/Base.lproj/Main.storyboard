@@ -1080,8 +1080,9 @@
                                     <action selector="generateSpreadsheet:" target="BkR-Mi-9XP" id="uyt-du-O1q"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeh-ES-jcH">
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeh-ES-jcH">
                                 <rect key="frame" x="14" y="13" width="153" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Remove Downtime" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T8U-Ds-c3I">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1102,14 +1103,14 @@
                                 </connections>
                             </button>
                             <box fixedFrame="YES" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="cFE-Va-LOW">
-                                <rect key="frame" x="453" y="13" width="151" height="33"/>
+                                <rect key="frame" x="398" y="13" width="206" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" ambiguous="YES" id="OzT-4q-gbx">
-                                    <rect key="frame" x="3" y="3" width="145" height="27"/>
+                                    <rect key="frame" x="3" y="3" width="200" height="27"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yXZ-AJ-ZRu">
-                                            <rect key="frame" x="19" y="5" width="46" height="18"/>
+                                            <rect key="frame" x="18" y="5" width="46" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="radio" title="Day" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="9ET-ZI-jpv">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1120,7 +1121,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L5U-Re-Unz">
-                                            <rect key="frame" x="72" y="5" width="55" height="18"/>
+                                            <rect key="frame" x="71" y="5" width="55" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="radio" title="Night" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="2IX-gJ-yeR">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1130,11 +1131,22 @@
                                                 <action selector="shiftSelected:" target="BkR-Mi-9XP" id="GET-t1-wP7"/>
                                             </connections>
                                         </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UML-uu-FvI">
+                                            <rect key="frame" x="131" y="5" width="52" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="Hoot" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="gvS-TU-60X">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="shiftSelected:" target="BkR-Mi-9XP" id="lYy-zj-KjM"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                 </view>
                             </box>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0ya-3B-9L1">
-                                <rect key="frame" x="514" y="46" width="29" height="14"/>
+                                <rect key="frame" x="487" y="45" width="29" height="14"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Shift" id="Qnp-zj-0jj">
                                     <font key="font" metaFont="smallSystem"/>
@@ -1143,9 +1155,6 @@
                                 </textFieldCell>
                             </textField>
                         </subviews>
-                        <constraints>
-                            <constraint firstItem="OzT-4q-gbx" firstAttribute="leading" secondItem="oeh-ES-jcH" secondAttribute="trailing" constant="295" id="UNI-b8-cl0"/>
-                        </constraints>
                     </view>
                     <connections>
                         <outlet property="addDowntimeButton" destination="4Tr-hv-I39" id="BhD-Lh-TXO"/>
@@ -1154,6 +1163,7 @@
                         <outlet property="downtimeReasonField" destination="6Z4-4H-wdM" id="qhg-QB-GPf"/>
                         <outlet property="downtimeTableView" destination="Wgt-v2-Vl8" id="aoh-wq-4qe"/>
                         <outlet property="endTimeComboBox" destination="c0Q-QA-yQF" id="EFr-Yz-SDk"/>
+                        <outlet property="hootShiftRadioButton" destination="UML-uu-FvI" id="mhj-dt-puQ"/>
                         <outlet property="nightShiftRadioButton" destination="L5U-Re-Unz" id="pma-1c-wdh"/>
                         <outlet property="removalButton" destination="oeh-ES-jcH" id="u0h-7W-ldx"/>
                         <outlet property="spreadsheetGeneratorButton" destination="IEY-TJ-Hez" id="rOJ-l8-ce1"/>
