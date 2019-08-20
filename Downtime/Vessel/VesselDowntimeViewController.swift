@@ -332,7 +332,7 @@ class VesselDowntimeViewController: NSTabViewController {
         ]
         
         if !categoryComboBox.stringValue.isEmpty {
-            entry.updateValue(categoryComboBox.stringValue, forKey: "category")
+            entry.updateValue(categoryComboBox.stringValue.trimmingCharacters(in: .whitespacesAndNewlines), forKey: "category")
         }
 
         
@@ -413,7 +413,7 @@ class VesselDowntimeViewController: NSTabViewController {
         }
         
         if !totalTimeComboBox.stringValue.isEmpty {
-            entry.updateValue(totalTimeComboBox.stringValue, forKey: "totalTime")
+            entry.updateValue(totalTimeComboBox.stringValue.trimmingCharacters(in: .whitespacesAndNewlines), forKey: "totalTime")
         }
         
         downtimeEntries.append(entry)
@@ -436,7 +436,15 @@ class VesselDowntimeViewController: NSTabViewController {
                 downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: columnIdentifier)
                 
                 if columnIdentifier == "startTime" {
-                    downtimeEntries[selectedRow].updateValue(getSortingTime(for: sender.stringValue), forKey: "sortTime")
+                    
+                    if downtimeEntries[selectedRow].isANote() {
+                        let hour = downtimeEntries[selectedRow]["startTime"]!.substring(toIndex: 2)
+                        let time = hour + "59"
+                        let sortTime = getSortingTime(for: time)
+                        downtimeEntries[selectedRow].updateValue(sortTime, forKey: "sortTime")
+                    } else {
+                        downtimeEntries[selectedRow].updateValue(getSortingTime(for: sender.stringValue), forKey: "sortTime")
+                    }
                 }
                 
             }
