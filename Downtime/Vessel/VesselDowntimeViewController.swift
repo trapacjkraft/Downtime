@@ -305,7 +305,7 @@ class VesselDowntimeViewController: NSTabViewController {
         let minutes = time.substring(fromIndex: 2)
         var hour = Int(time.substring(toIndex: time.length - 2))!
         
-        if hour >= 0 && hour <= 7 {
+        if hour >= 0 && hour <= 5 {
             hour += 24
         }
         

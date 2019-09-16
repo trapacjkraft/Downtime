@@ -663,7 +663,7 @@
                                     <items>
                                         <menuItem title="Downtime Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                             <connections>
-                                                <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
+                                                <action selector="displayTutorial:" target="Voe-Tx-rLC" id="9Qi-UE-mco"/>
                                             </connections>
                                         </menuItem>
                                     </items>
