@@ -19,6 +19,9 @@ class VesselDowntimeViewController: NSTabViewController {
     
     @IBOutlet var downtimeTableView: NSTableView!
     
+    @IBOutlet var flexHourCheck: NSButton!
+    @IBOutlet var extendedCheck: NSButton!
+    
     @IBOutlet var dayShiftRadioButton: NSButton!
     @IBOutlet var nightShiftRadioButton: NSButton!
     @IBOutlet var hootShiftRadioButton: NSButton!
@@ -62,6 +65,11 @@ class VesselDowntimeViewController: NSTabViewController {
             }
         }
     }
+    
+    var shiftOptions = [
+        "flex": false,
+        "extended": true
+    ]
     
     var dateFetcherTimer = Timer()
     var saveDataTimer = Timer()
@@ -484,6 +492,14 @@ class VesselDowntimeViewController: NSTabViewController {
         spreadsheetGeneratorButton.isEnabled = true
     }
     
+    @IBAction func optionsSelected(_ sender: NSButton) {
+        if sender.state == .on {
+            shiftOptions.updateValue(true, forKey: sender.identifier!.rawValue)
+        } else if sender.state == .off {
+            shiftOptions.updateValue(false, forKey: sender.identifier!.rawValue)
+        }
+    }
+    
     func tableContentIsValidForExport() -> Bool {
         
         for entry in downtimeEntries {
@@ -504,11 +520,11 @@ class VesselDowntimeViewController: NSTabViewController {
     @IBAction func generateTextReport(_ sender: Any) {
         if tableContentIsValidForExport() {
             if dayShiftRadioButton.state == .on {
-                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
+                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day", flex: shiftOptions["flex"]!, extended: shiftOptions["extended"]!)
             } else if nightShiftRadioButton.state == .on {
-                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night", flex: shiftOptions["flex"]!, extended: shiftOptions["extended"]!)
             } else if hootShiftRadioButton.state == .on {
-                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "hoot")
+                textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "hoot", flex: shiftOptions["flex"]!, extended: shiftOptions["extended"]!)
             }
         } else {
             let alert = NSAlert()
@@ -522,11 +538,11 @@ class VesselDowntimeViewController: NSTabViewController {
         
         if tableContentIsValidForExport() {
             if dayShiftRadioButton.state == .on {
-                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day")
+                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day", flex: shiftOptions["flex"]!, extended: shiftOptions["extended"]!)
             } else if nightShiftRadioButton.state == .on {
-                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night")
+                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "night", flex: shiftOptions["flex"]!, extended: shiftOptions["extended"]!)
             } else if hootShiftRadioButton.state == .on {
-                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "hoot")
+                spreadsheetGenerator.getDowntimeEntries(data: downtimeEntries, shift: "hoot", flex: shiftOptions["flex"]!, extended: shiftOptions["extended"]!)
             }
         } else {
             let alert = NSAlert()

@@ -69,14 +69,17 @@ class VesselDowntimeTextReportGenerator: NSObject {
 
     let sortedDowntimeKeyForValue = ["00":"0000", "01":"0100", "02":"0200", "03":"0300", "04":"0400", "05":"0500", "06":"0600", "07":"0700", "08":"0800", "09":"0900", "10":"1000", "11":"1100", "12":"1200", "13":"1300", "14":"1400", "15":"1500", "16":"1600", "17":"1700", "18":"1800", "19":"1900", "20":"2000", "21":"2100", "22":"2200", "23":"2300", "24":"2400"]
     
-    let daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
-    let nightsideHours = ["1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200"]
-    let hootHours = ["0300", "0400", "0500", "0600", "0700"]
+    var daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
+    var nightsideHours = ["1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200"]
+    var hootHours = ["0300", "0400", "0500", "0600", "0700"]
     
     var isDaysideReport = false
     var isNightsideReport = false
     var isHootReport = false
     
+    var isFlexStart = false
+    var isExtendedShift = false
+
     var report = NSMutableAttributedString()
     
     var totalMech = NSDecimalNumber.zero
@@ -94,7 +97,7 @@ class VesselDowntimeTextReportGenerator: NSObject {
     let font = NSFont(name: "Calibri", size: 14.5)!
     let boldFont = NSFont(name: "Calibri-Bold", size: 14.5)!
     
-    func getDowntimeEntries(data: [[String: String]], shift: String) {
+    func getDowntimeEntries(data: [[String: String]], shift: String, flex: Bool, extended: Bool) {
         allDowntimeEntries = data
         
         if shift == "day" {
@@ -103,6 +106,30 @@ class VesselDowntimeTextReportGenerator: NSObject {
             isNightsideReport = true
         } else if shift == "hoot" {
             isHootReport = true
+        }
+        
+        isFlexStart = flex
+        isExtendedShift = extended
+        
+        if isFlexStart && !isExtendedShift {
+            daysideHours = ["0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
+            nightsideHours = ["1700", "1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200"]
+        }
+        
+        if !isFlexStart && isExtendedShift {
+            daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800"]
+            nightsideHours = ["1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200", "0300", "0400"]
+        }
+        
+        if isFlexStart && isExtendedShift {
+            daysideHours = ["0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800"]
+            nightsideHours = ["1700", "1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200", "0300", "0400"]
+
+        }
+        
+        if !isFlexStart && !isExtendedShift {
+            daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
+            nightsideHours = ["1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200"]
         }
         
         sortDowntimeEntries()
@@ -135,6 +162,11 @@ class VesselDowntimeTextReportGenerator: NSObject {
             for hour in daysideHours {
                 
                 switch hour {
+                case "0700":
+                    let line = "0700 - 0800:\n\n".withBoldText(boldPartsOfString: ["0700 - 0800:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
+                    line.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, line.length))
+                    report.append(line)
                 case "0800":
                     let line = "0800 - 0900:\n\n".withBoldText(boldPartsOfString: ["0800 - 0900:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
                     line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
@@ -177,6 +209,16 @@ class VesselDowntimeTextReportGenerator: NSObject {
                     report.append(line)
                 case "1600":
                     let line = "1600 - 1700:\n\n".withBoldText(boldPartsOfString: ["1600 - 1700:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
+                    line.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, line.length))
+                    report.append(line)
+                case "1700":
+                    let line = "1700 - 1800:\n\n".withBoldText(boldPartsOfString: ["1700 - 1800:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
+                    line.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, line.length))
+                    report.append(line)
+                case "1800":
+                    let line = "1800 - 1900:\n\n".withBoldText(boldPartsOfString: ["1800 - 1900:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
                     line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
                     line.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, line.length))
                     report.append(line)
@@ -234,6 +276,11 @@ class VesselDowntimeTextReportGenerator: NSObject {
         } else if isNightsideReport {
             for hour in nightsideHours {
                 switch hour {
+                case "1700":
+                    let line = "1700 - 1800:\n\n".withBoldText(boldPartsOfString: ["1700 - 1800:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
+                    line.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, line.length))
+                    report.append(line)
                 case "1800":
                     let line = "1800 - 1900:\n\n".withBoldText(boldPartsOfString: ["1800 - 1900:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
                     line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
@@ -276,6 +323,16 @@ class VesselDowntimeTextReportGenerator: NSObject {
                     report.append(line)
                 case "0200":
                     let line = "0200 - 0300:\n\n".withBoldText(boldPartsOfString: ["0200 - 0300:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
+                    line.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, line.length))
+                    report.append(line)
+                case "0300":
+                    let line = "0300 - 0400:\n\n".withBoldText(boldPartsOfString: ["0300 - 0400:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
+                    line.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, line.length))
+                    report.append(line)
+                case "0400":
+                    let line = "0400 - 0500:\n\n".withBoldText(boldPartsOfString: ["0400 - 0500:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
                     line.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, line.length))
                     line.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, line.length))
                     report.append(line)

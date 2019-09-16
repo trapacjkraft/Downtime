@@ -835,7 +835,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="push" title="Add Downtime" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZAI-tr-wvc">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" size="13" name="Calibri"/>
+                                                <font key="font" metaFont="system"/>
                                                 <string key="keyEquivalent">r</string>
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
@@ -1154,6 +1154,47 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <box fixedFrame="YES" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="ReP-s2-9y2">
+                                <rect key="frame" x="196" y="13" width="200" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <view key="contentView" ambiguous="YES" id="38W-6D-Wgb">
+                                    <rect key="frame" x="3" y="3" width="194" height="27"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button identifier="flex" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WmJ-kF-HG8">
+                                            <rect key="frame" x="18" y="5" width="80" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="Flex Hour" bezelStyle="regularSquare" imagePosition="left" inset="2" id="aA9-CP-bdi">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="optionsSelected:" target="BkR-Mi-9XP" id="FoE-aY-eoQ"/>
+                                            </connections>
+                                        </button>
+                                        <button identifier="extended" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ufa-hX-HkZ">
+                                            <rect key="frame" x="102" y="5" width="79" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="Extended" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Bv1-yC-eOQ">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="optionsSelected:" target="BkR-Mi-9XP" id="Wdf-tE-obd"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                </view>
+                            </box>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rWf-jf-xGf">
+                                <rect key="frame" x="273" y="45" width="46" height="14"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Options" id="MX1-eb-R71">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
@@ -1163,6 +1204,8 @@
                         <outlet property="downtimeReasonField" destination="6Z4-4H-wdM" id="qhg-QB-GPf"/>
                         <outlet property="downtimeTableView" destination="Wgt-v2-Vl8" id="aoh-wq-4qe"/>
                         <outlet property="endTimeComboBox" destination="c0Q-QA-yQF" id="EFr-Yz-SDk"/>
+                        <outlet property="extendedCheck" destination="Ufa-hX-HkZ" id="W3Y-bZ-b5d"/>
+                        <outlet property="flexHourCheck" destination="WmJ-kF-HG8" id="Vw6-qv-szc"/>
                         <outlet property="hootShiftRadioButton" destination="UML-uu-FvI" id="mhj-dt-puQ"/>
                         <outlet property="nightShiftRadioButton" destination="L5U-Re-Unz" id="pma-1c-wdh"/>
                         <outlet property="removalButton" destination="oeh-ES-jcH" id="u0h-7W-ldx"/>

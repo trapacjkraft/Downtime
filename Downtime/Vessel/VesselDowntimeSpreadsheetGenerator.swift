@@ -69,13 +69,16 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
     
     let sortedDowntimeKeyForValue = ["00":"0000", "01":"0100", "02":"0200", "03":"0300", "04":"0400", "05":"0500", "06":"0600", "07":"0700", "08":"0800", "09":"0900", "10":"1000", "11":"1100", "12":"1200", "13":"1300", "14":"1400", "15":"1500", "16":"1600", "17":"1700", "18":"1800", "19":"1900", "20":"2000", "21":"2100", "22":"2200", "23":"2300", "24":"2400"]
     
-    let daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
-    let nightsideHours = ["1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200"]
-    let hootHours = ["0300", "0400", "0500", "0600", "0700"]
+    var daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
+    var nightsideHours = ["1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200"]
+    var hootHours = ["0300", "0400", "0500", "0600", "0700"]
     
     var isDaysideReport = false
     var isNightsideReport = false
     var isHootReport = false
+    
+    var isFlexStart = false
+    var isExtendedShift = false
 
     var report = [String]()
     
@@ -93,7 +96,7 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
     
     let exportDirectory: String = NSHomeDirectory() + "/Documents/"
     
-    func getDowntimeEntries(data: [[String: String]], shift: String) {
+    func getDowntimeEntries(data: [[String: String]], shift: String, flex: Bool, extended: Bool) {
         allDowntimeEntries = data
         
         if shift == "day" {
@@ -103,6 +106,31 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
         } else if shift == "hoot" {
             isHootReport = true
         }
+        
+        isFlexStart = flex
+        isExtendedShift = extended
+        
+        if isFlexStart && !isExtendedShift {
+            daysideHours = ["0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
+            nightsideHours = ["1700", "1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200"]
+        }
+        
+        if !isFlexStart && isExtendedShift {
+            daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800"]
+            nightsideHours = ["1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200", "0300", "0400"]
+        }
+        
+        if isFlexStart && isExtendedShift {
+            daysideHours = ["0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800"]
+            nightsideHours = ["1700", "1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200", "0300", "0400"]
+            
+        }
+        
+        if !isFlexStart && !isExtendedShift {
+            daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
+            nightsideHours = ["1800", "1900", "2000", "2100", "2200", "2300", "0000", "0100", "0200"]
+        }
+
         
         sortDowntimeEntries()
     }
@@ -135,6 +163,8 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
         if isDaysideReport {
             for hour in daysideHours {
                 switch hour {
+                case "0700":
+                    report.append("0700-0800,,,,,,\n")
                 case "0800":
                     report.append("0800-0900,,,,,,\n")
                 case "0900":
@@ -153,6 +183,10 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
                     report.append("1500-1600,,,,,,\n")
                 case "1600":
                     report.append("1600-1700,,,,,,\n")
+                case "1700":
+                    report.append("1700-1800,,,,,,\n")
+                case "1800":
+                    report.append("1800-1900,,,,,,\n")
                 default:
                     break //should not be reached
                 }
@@ -190,6 +224,8 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
         } else if isNightsideReport {
             for hour in nightsideHours {
                 switch hour {
+                case "1700":
+                    report.append("1700-1800,,,,,,\n")
                 case "1800":
                     report.append("1800-1900,,,,,,\n")
                 case "1900":
@@ -208,6 +244,11 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
                     report.append("0100-0200,,,,,,\n")
                 case "0200":
                     report.append("0200-0300,,,,,,\n")
+                case "0300":
+                    report.append("0300-0400,,,,,,\n")
+                case "0400":
+                    report.append("0400-0500,,,,,,\n")
+
                 default:
                     break //should not be reached
                 }
