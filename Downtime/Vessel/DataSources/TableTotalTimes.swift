@@ -22,6 +22,9 @@ class TableTotalTimes: NSObject, NSComboBoxDataSource, NSComboBoxDelegate {
         startTime = start
         endTime = end
         
+        guard !startTime.isEmpty else { return }
+        guard !endTime.isEmpty else { return }
+        
         let startingHour = Int(startTime.substring(toIndex: startTime.count - 2))
         var endingHour = Int(endTime.substring(toIndex: endTime.count - 2))
         let endingMinutes = endTime.substring(fromIndex: 2)

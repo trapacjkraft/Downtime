@@ -62,14 +62,29 @@ class VesselDowntimeViewController: NSTabViewController {
             
             if downtimeValuesChangedBetween(newValues: downtimeEntries, oldValues: oldValue) {
                 downtimeTableView.reloadData()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                    self.nc.post(name: .downtimeEntriesChanged, object: nil)
+                })
             }
         }
     }
     
+    var badEntries = [[String: String]]()
+    
+    let columnNumbers = [
+        "startTime": 0,
+        "endTime": 1,
+        "downtimeReason": 2,
+        "totalTime": 3,
+        "category": 4
+    ]
+    
     var shiftOptions = [
         "flex": false,
-        "extended": true
+        "extended": false,
     ]
+    
+    var entriesHaveSaveCharacters = false
     
     var dateFetcherTimer = Timer()
     var saveDataTimer = Timer()
@@ -106,6 +121,10 @@ class VesselDowntimeViewController: NSTabViewController {
         nc.addObserver(self, selector: #selector(enableRemovalButton), name: selectionChangedNotication, object: nil)
         nc.addObserver(self, selector: #selector(fetchTotalTimes), name: popupWillAppearNotification, object: nil)
         
+        nc.addObserver(self, selector: #selector(checkDataAfterEntriesChanged), name: .downtimeEntriesChanged, object: nil)
+        nc.addObserver(self, selector: #selector(checkFieldsForSaveCharacters), name: Notification.Name.checkEntriesForSaveCharacters, object: nil)
+        nc.addObserver(self, selector: #selector(indicateFromAppDelegate), name: Notification.Name.indicateBadEntries, object: nil)
+        
         nc.addObserver(self, selector: #selector(saveData), name: NSApplication.willTerminateNotification, object: nil)
         nc.addObserver(self, selector: #selector(loadData), name: NSApplication.didFinishLaunchingNotification, object: nil)
         
@@ -116,6 +135,8 @@ class VesselDowntimeViewController: NSTabViewController {
         nc.addObserver(self, selector: #selector(selectDeadtime), name: .entryIsDeadtime, object: nil)
         nc.addObserver(self, selector: #selector(selectNote), name: .entryIsNote, object: nil)
         nc.addObserver(self, selector: #selector(deselectCategory), name: .entryIsNotPrefixed, object: nil)
+        
+        checkFieldsForSaveCharacters()
     }
     
     @objc func saveData() {
@@ -125,12 +146,12 @@ class VesselDowntimeViewController: NSTabViewController {
         
         for entry in downtimeEntries {
             var data = String()
-            data.append("\(entry["startTime"]!)|")
-            data.append("\(entry["sortTime"]!)|")
-            data.append("\(entry["endTime"]!)|")
-            data.append("\(entry["downtimeReason"]!)|")
-            data.append("\(entry["totalTime"]!)|")
-            data.append("\(entry["category"]!)|+")
+            data.append("\(entry["startTime"]!)%$")
+            data.append("\(entry["sortTime"]!)%$")
+            data.append("\(entry["endTime"]!)%$")
+            data.append("\(entry["downtimeReason"]!)%$")
+            data.append("\(entry["totalTime"]!)%$")
+            data.append("\(entry["category"]!)%$&#~")
             
             sessionDataContents.append(data)
             
@@ -151,29 +172,29 @@ class VesselDowntimeViewController: NSTabViewController {
     
     @objc func loadData() {
         var fileContents = String()
-        var fileCreationDate = Date()
+        var fileModificationDate = Date()
         let loadPath: String = NSHomeDirectory() + "/Documents/downtime_session_data.txt"
 
         if fm.fileExists(atPath: loadPath) {
             do {
                 let fileAttributes = try fm.attributesOfItem(atPath: loadPath) as [FileAttributeKey:Any]
-                fileCreationDate = fileAttributes[FileAttributeKey.creationDate] as! Date
+                fileModificationDate = fileAttributes[FileAttributeKey.modificationDate] as! Date
             } catch {
                 Swift.print(error)
             }
             
             let now = Date()
             
-            let difference = now.timeIntervalSince(fileCreationDate)
+            let difference = now.timeIntervalSince(fileModificationDate)
             
-            if difference < 28800 {
+            if difference < 43200 {
                 fileContents = String(data: fm.contents(atPath: loadPath)!, encoding: .utf8) ?? ""
-                var downtimeData = fileContents.components(separatedBy: "+")
+                var downtimeData = fileContents.components(separatedBy: "&#~")
                 downtimeData.removeLast()
                 
                 for dataEntry in downtimeData {
                     
-                    var data = dataEntry.components(separatedBy: "|")
+                    var data = dataEntry.components(separatedBy: "%$")
                     data.removeLast()
                     
                     var entry: [String: String] = [
@@ -208,6 +229,32 @@ class VesselDowntimeViewController: NSTabViewController {
         }
         
         
+    }
+    
+    @objc func checkFieldsForSaveCharacters() {
+        
+        var badFieldCount = 0
+            
+        if downtimeEntries.isEmpty {
+            nc.post(name: .entriesDoNotContainSaveCharacters, object: nil)
+            entriesHaveSaveCharacters = false
+        } else {
+            for entry in downtimeEntries {
+                
+                if entry["downtimeReason"]!.contains("%$") || entry["downtimeReason"]!.contains("&#~") {
+                    badFieldCount += 1
+                }
+                
+                if badFieldCount > 0 {
+                    nc.post(name: Notification.Name.entriesContainSaveCharacters, object: nil)
+                    entriesHaveSaveCharacters = true
+                } else {
+                    nc.post(name: Notification.Name.entriesDoNotContainSaveCharacters, object: nil)
+                    entriesHaveSaveCharacters = false
+                }
+            }
+        }
+
     }
     
     @objc func selectMechanical() {
@@ -305,7 +352,11 @@ class VesselDowntimeViewController: NSTabViewController {
         let minutes = time.substring(fromIndex: 2)
         var hour = Int(time.substring(toIndex: time.length - 2))!
         
-        if hour >= 0 && hour <= 5 {
+        if hootShiftRadioButton.state == .on {
+            /*if hour >= 0 && hour <= 8 {
+                hour += 24
+            }*/
+        } else if hour >= 0 && hour <= 4 {
             hour += 24
         }
         
@@ -371,7 +422,11 @@ class VesselDowntimeViewController: NSTabViewController {
             
             if let category = entry["category"] {
                 
-                let prefix = prefixes[category]!
+                var prefix = ""
+                
+                if !category.isEmpty {
+                    prefix = prefixes[category]!
+                }
                 
                 switch category {
                     
@@ -435,17 +490,17 @@ class VesselDowntimeViewController: NSTabViewController {
         addDowntimeButton.keyEquivalent = String("")
     }
     
-    @IBAction func tableCellValueEdited(_ sender: NSTextField) {
+    @IBAction @objc func tableCellValueEdited(_ sender: NSTextField) {
         
         let selectedRow = downtimeTableView.row(for: sender)
         
         if let columnIdentifier: String = sender.superview?.identifier?.rawValue {
             if selectedRow != -1 {
-                downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: columnIdentifier)
+                downtimeEntries[selectedRow].updateValue(sender.stringValue, forKey: columnIdentifier) //update the data source
                 
-                if columnIdentifier == "startTime" {
+                if columnIdentifier == "startTime" { //if the user is updating a start time, appropriately update the sort time (which is not displayed in the table)
                     
-                    if downtimeEntries[selectedRow].isANote() {
+                    if downtimeEntries[selectedRow].isANote() { //Use a time ending in 59 for the sort time, for timed notes
                         let hour = downtimeEntries[selectedRow]["startTime"]!.substring(toIndex: 2)
                         let time = hour + "59"
                         let sortTime = getSortingTime(for: time)
@@ -455,10 +510,21 @@ class VesselDowntimeViewController: NSTabViewController {
                     }
                 }
                 
+                if columnIdentifier == "startTime" || columnIdentifier == "endTime" || columnIdentifier == "downtimeReason" {
+                    let cell = downtimeTableView.view(atColumn: columnNumbers[columnIdentifier]!, row: selectedRow, makeIfNecessary: false) as? NSTableCellView
+                    cell?.textField?.backgroundColor = NSColor.clear
+                    cell?.textField?.textColor = NSColor.black
+                } else if let comboCell = sender.superview as? TotalTimesTableCellView {
+                    comboCell.totalTimesComboBox.backgroundColor = NSColor.clear
+                } else if let comboCell = sender.superview as? CategoryComboTableCellView {
+                    comboCell.categoryComboBox.backgroundColor = NSColor.clear
+                }
+                //Figure out why the colors are moving around
             }
         }
+        
     }
-    
+        
     @IBAction func categorySelected(_ sender: NSComboBox) {
         if !categoryComboBox.stringValue.isEmpty {
             
@@ -490,6 +556,17 @@ class VesselDowntimeViewController: NSTabViewController {
     @IBAction func shiftSelected(_ sender: Any) {
         textReportGeneratorButton.isEnabled = true
         spreadsheetGeneratorButton.isEnabled = true
+        
+        
+        
+        for entry in downtimeEntries {
+            if !entry.isANote() {
+                downtimeEntries[downtimeEntries.firstIndex(of: entry)!].updateValue(getSortingTime(for: entry["startTime"]!), forKey: "sortTime")
+            }
+        }
+                
+        downtimeTableView.reloadData()
+        
     }
     
     @IBAction func optionsSelected(_ sender: NSButton) {
@@ -502,22 +579,204 @@ class VesselDowntimeViewController: NSTabViewController {
     
     func tableContentIsValidForExport() -> Bool {
         
+        var hasBadEntries = false
+        
         for entry in downtimeEntries {
             
             if !entry.isANote() {
-                guard entry["startTime"]!.count == 4 && entry["startTime"]!.isNumeric else { return false }
-                guard entry["endTime"]!.count == 4 && entry["endTime"]!.isNumeric else { return false }
-                guard !entry["totalTime"]!.isEmpty else { return false }
+                
+                if entry["startTime"]!.count != 4 || !entry["startTime"]!.isNumeric {
+                    if !badEntries.contains(entry) {
+                        badEntries.append(entry)
+                    }
+                    hasBadEntries = true
+                }
+                
+                if entry["endTime"]!.count != 4 || !entry["endTime"]!.isNumeric {
+                    if !badEntries.contains(entry) {
+                        badEntries.append(entry)
+                    }
+                    hasBadEntries = true
+                }
+                
+                if entry["totalTime"]!.isEmpty {
+                    if !badEntries.contains(entry) {
+                        badEntries.append(entry)
+                    }
+                    hasBadEntries = true
+                }
             }
             
-            guard !entry["downtimeReason"]!.isEmpty else { return false }
-            guard !entry["category"]!.isEmpty else { return false }
+            if entry["downtimeReason"]!.isEmpty || entry["downtimeReason"]!.contains("%$") || entry["downtimeReason"]!.contains("&#~") {
+                if !badEntries.contains(entry) {
+                    badEntries.append(entry)
+                }
+                hasBadEntries = true
+            }
+            
+            if entry["category"]!.isEmpty {
+                if !badEntries.contains(entry) {
+                    badEntries.append(entry)
+                }
+                hasBadEntries = true
+            }
         }
-        
+
+        if hasBadEntries {
+            indicateBadValues()
+            return false
+        } else if !hasBadEntries {
+            badEntries.removeAll()
+        }
+
+        checkFieldsForSaveCharacters()
         return true
     }
     
+    func indicateBadValues() {
+        
+        var valuesToHighlight = [Int: [String]]()
+        
+        for badEntry in badEntries {
+            
+            var keysForBadValues = [String]()
+            
+            if downtimeEntries.contains(badEntry) {
+                
+                if !badEntry.isANote() {
+                    if badEntry["startTime"]!.count != 4 || !badEntry["startTime"]!.isNumeric {
+                        keysForBadValues.append("startTime")
+                    }
+                    
+                    if badEntry["endTime"]!.count != 4 || !badEntry["endTime"]!.isNumeric {
+                        keysForBadValues.append("endTime")
+                    }
+                    
+                    if badEntry["totalTime"]!.isEmpty {
+                        keysForBadValues.append("totalTime")
+                    }
+                }
+                
+                if badEntry["downtimeReason"]!.isEmpty {
+                    if !keysForBadValues.contains("downtimeReason") {
+                        keysForBadValues.append("downtimeReason")
+                    }
+                }
+                
+                if badEntry["downtimeReason"]!.contains("%$") {
+                    if !keysForBadValues.contains("downtimeReason") {
+                        keysForBadValues.append("downtimeReason")
+                    }
+                }
+                
+                if badEntry["downtimeReason"]!.contains("&#~") {
+                    if !keysForBadValues.contains("downtimeReason") {
+                        keysForBadValues.append("downtimeReason")
+                    }
+                }
+                
+                if badEntry["category"]!.isEmpty {
+                    keysForBadValues.append("category")
+                }
+                
+            }
+            
+            valuesToHighlight.updateValue(keysForBadValues, forKey: downtimeEntries.firstIndex(of: badEntry)!)
+            
+        }
+        
+        for entry in downtimeEntries {
+            
+            for (columnIdentifier, columnIndex) in columnNumbers {
+                
+                switch columnIdentifier {
+                    
+                case "startTime":
+                    if entry[columnIdentifier]!.count == 4 && entry[columnIdentifier]!.isNumeric {
+                        let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
+                        cell?.textField?.textColor = .black
+                        cell?.textField?.backgroundColor = .clear
+                    }
+                case "endTime":
+                    if entry[columnIdentifier]!.count == 4 && entry[columnIdentifier]!.isNumeric {
+                        let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
+                        cell?.textField?.textColor = .black
+                        cell?.textField?.backgroundColor = .clear
+                    }
+
+                case "downtimeReason":
+                    if !entry[columnIdentifier]!.isEmpty && !entry[columnIdentifier]!.contains("%$") && !entry[columnIdentifier]!.contains("&#~") {
+                        let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
+                        cell?.textField?.textColor = .black
+                        cell?.textField?.backgroundColor = .clear
+                    }
+                case "totalTime":
+                    if !entry[columnIdentifier]!.isEmpty {
+                        let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? TotalTimesTableCellView
+                        cell?.totalTimesComboBox.backgroundColor = .clear
+
+                    }
+                case "category":
+                    if !entry[columnIdentifier]!.isEmpty {
+                        let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? CategoryComboTableCellView
+                        cell?.categoryComboBox.backgroundColor = .clear
+                    }
+                default:
+                    break
+                    
+                    
+                }
+                
+            }
+            
+        }
+        
+        
+        for (row, columnIDs) in valuesToHighlight {
+            
+            for id in columnIDs {
+
+                if id == "totalTime" {
+                    let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? TotalTimesTableCellView
+                    cell?.totalTimesComboBox.backgroundColor = NSColor.systemYellow
+                } else if id == "category" {
+                    let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? CategoryComboTableCellView
+                    cell?.categoryComboBox.backgroundColor = NSColor.systemYellow
+                } else {
+                    let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? NSTableCellView
+                    
+                    if (cell?.textField?.stringValue.isEmpty)! {
+                        cell?.textField?.backgroundColor = NSColor.systemYellow
+                    } else {
+                        cell?.textField?.textColor = NSColor.systemRed
+                    }
+                }
+            }
+        }
+        
+        valuesToHighlight.removeAll()
+        badEntries.removeAll()
+    }
+    
+    @objc func checkDataAfterEntriesChanged() {
+        let valuesAreGood = tableContentIsValidForExport()
+        
+        if !valuesAreGood {
+            indicateBadValues()
+        }
+    }
+    
+    @objc func indicateFromAppDelegate() {
+        let valuesAreGood = tableContentIsValidForExport()
+        
+        if !valuesAreGood {
+            indicateBadValues()
+        }
+        
+    }
+    
     @IBAction func generateTextReport(_ sender: Any) {
+                
         if tableContentIsValidForExport() {
             if dayShiftRadioButton.state == .on {
                 textReportGenerator.getDowntimeEntries(data: downtimeEntries, shift: "day", flex: shiftOptions["flex"]!, extended: shiftOptions["extended"]!)
@@ -528,8 +787,13 @@ class VesselDowntimeViewController: NSTabViewController {
             }
         } else {
             let alert = NSAlert()
-            alert.messageText = "Missing values!"
-            alert.informativeText = "You are missing values for one or more downtime entries. Please check the downtime you've entered and make sure you have all values entered before exporting."
+            alert.messageText = "Bad values!"
+            alert.informativeText = "Some of the values you entered are invalid for exporting or missing. The bad values have turned red - the missing values have been highlighted in yellow. Please correct these before attempting to export again. For guidelines on what the values must be, click Help > Downtime Help, or press Shift-Command-? on your keyboard."
+            
+            if entriesHaveSaveCharacters {
+                alert.informativeText += "\n\nYou also have the characters %$ and &#~ appearing in your downtime entries. These values cannot be used in downtime entries as Downtime uses them to save your data."
+            }
+            
             alert.runModal()
         }
     }
@@ -546,8 +810,11 @@ class VesselDowntimeViewController: NSTabViewController {
             }
         } else {
             let alert = NSAlert()
-            alert.messageText = "Missing values!"
-            alert.informativeText = "You are missing values for one or more downtime entries. Please check the downtime you've entered and make sure you have all values entered before exporting."
+            alert.messageText = "Bad values!"
+            alert.informativeText = "Some of the values you entered are invalid for exporting or missing. The bad values have turned red - the missing values have been highlighted in yellow. Please correct these before attempting to export again. For guidelines on what the values must be, click Help > Downtime Help, or press Shift-Command-? on your keyboard."
+            if entriesHaveSaveCharacters {
+                alert.informativeText += "\n\nYou also have the characters %$ and &#~ appearing in your downtime entries. These values cannot be used in downtime entries as Downtime uses them to save your data."
+            }
             alert.runModal()
         }
     }
@@ -593,6 +860,8 @@ extension VesselDowntimeViewController: NSTableViewDataSource, NSTableViewDelega
         if cell!.identifier!.rawValue == "category" {
             let comboCell = cell as? CategoryComboTableCellView
             comboCell?.categoryComboBox.stringValue = item[(tableColumn!.identifier.rawValue)]!
+            comboCell?.wantsLayer = true
+            comboCell?.categoryComboBox.drawsBackground = true
             return comboCell
         }
         
@@ -611,11 +880,14 @@ extension VesselDowntimeViewController: NSTableViewDataSource, NSTableViewDelega
             }
         
             comboCell.totalTimesComboBox.stringValue = item[(tableColumn!.identifier.rawValue)]!
-            
+            comboCell.wantsLayer = true
+            comboCell.totalTimesComboBox.drawsBackground = true
             return comboCell
         }
         
         cell?.textField?.stringValue = item[(tableColumn?.identifier.rawValue)!]!
+        cell?.wantsLayer = true
+        cell?.textField?.drawsBackground = true
         return cell
     }
     

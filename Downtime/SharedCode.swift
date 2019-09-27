@@ -118,6 +118,14 @@ extension Notification.Name {
     static let entryIsSystem = Notification.Name("entryIsSystem")
     static let entryIsDeadtime = Notification.Name("entryIsDeadtime")
     static let entryIsNote = Notification.Name("entryIsNote")
+    
+    static let checkEntriesForSaveCharacters = Notification.Name("checkEntriesForSaveCharacters")
+    static let entriesContainSaveCharacters = Notification.Name("entriesContainSaveCharacters")
+    static let entriesDoNotContainSaveCharacters = Notification.Name("entriesDoNotContainSaveCharacters")
+    
+    static let downtimeEntriesChanged = Notification.Name("downtimeEntriesChanged")
+    
+    static let indicateBadEntries = Notification.Name("indicateBadEntries")
 }
 
 class SharedCode: NSObject {
