@@ -67,6 +67,33 @@ class VesselDowntimeTextReportGenerator: NSObject {
         "2300":[[:]]
     ]
 
+    var sortedNotes: [String: [[String: String]]] = [
+        "0000":[[:]],
+        "0100":[[:]],
+        "0200":[[:]],
+        "0300":[[:]],
+        "0400":[[:]],
+        "0500":[[:]],
+        "0600":[[:]],
+        "0700":[[:]],
+        "0800":[[:]],
+        "0900":[[:]],
+        "1000":[[:]],
+        "1100":[[:]],
+        "1200":[[:]],
+        "1300":[[:]],
+        "1400":[[:]],
+        "1500":[[:]],
+        "1600":[[:]],
+        "1700":[[:]],
+        "1800":[[:]],
+        "1900":[[:]],
+        "2000":[[:]],
+        "2100":[[:]],
+        "2200":[[:]],
+        "2300":[[:]]
+    ]
+
     let sortedDowntimeKeyForValue = ["00":"0000", "01":"0100", "02":"0200", "03":"0300", "04":"0400", "05":"0500", "06":"0600", "07":"0700", "08":"0800", "09":"0900", "10":"1000", "11":"1100", "12":"1200", "13":"1300", "14":"1400", "15":"1500", "16":"1600", "17":"1700", "18":"1800", "19":"1900", "20":"2000", "21":"2100", "22":"2200", "23":"2300", "24":"2400"]
     
     var daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
@@ -139,7 +166,10 @@ class VesselDowntimeTextReportGenerator: NSObject {
     func sortDowntimeEntries() {
         for entry in allDowntimeEntries {
             if entry.isANote() {
-                if entry.hasStartTime() {
+                if entry.hasStartTime() && !entry.hasEndTime() {
+                    let startingHour = entry["startTime"]!.substring(toIndex: (entry["startTime"]!.length - 2))
+                    sortedNotes[sortedDowntimeKeyForValue[startingHour]!]?.append(entry)
+                } else if entry.hasStartTime() && entry.hasEndTime() {
                     let startingHour = entry["startTime"]!.substring(toIndex: (entry["startTime"]!.length - 2))
                     timedNotes[sortedDowntimeKeyForValue[startingHour]!]?.append(entry)
                 } else if !entry.hasStartTime() && !entry.hasEndTime() {
@@ -157,6 +187,22 @@ class VesselDowntimeTextReportGenerator: NSObject {
     func generateReport() {
         
         let emptyLine = "\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        
+        let noteHeader = "Notes:".withBoldText(boldPartsOfString: ["Notes:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        noteHeader.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, noteHeader.length))
+        noteHeader.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, noteHeader.length))
+        report.append(noteHeader)
+        report.append(emptyLine)
+        report.append(emptyLine)
+        
+        for note in blankNotes {
+            let noteLine = note["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+            noteLine.append(emptyLine)
+            report.append(noteLine)
+        }
+        
+        report.append(emptyLine)
+        report.append(emptyLine)
         
         if isDaysideReport {
             for hour in daysideHours {
@@ -227,50 +273,73 @@ class VesselDowntimeTextReportGenerator: NSObject {
                     break //Should not be reached
                 }
                 
-                for entry in sortedDowntimeEntries[hour]! {
-                    if entry.count > 1 {
-                        let reportLine = NSMutableAttributedString()
-                        
-                        let firstPart = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
-                        let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))\n"
-                        let boldedPart = secondPart.withBoldText(boldPartsOfString: [secondPart as NSString], font: font, boldFont: boldFont)
-                        
-                        reportLine.append(firstPart)
-                        reportLine.append(boldedPart)
-                        
-                        switch entry["category"]! {
+                if sortedDowntimeEntries[hour]!.count == 1 {
+                    let line = "No significant downtime for this hour.\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
+                    report.append(line)
+                } else {
+                    for entry in sortedDowntimeEntries[hour]! {
+                        if entry.count > 1 {
+                            let reportLine = NSMutableAttributedString()
                             
-                        case "Mechanical":
-                            totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "Operational Scenario":
-                            totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "E-Stop":
-                            totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "System / Tech":
-                            totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "Deadtime":
-                            totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        default:
-                            break   //should not be reached
+                            let firstPart = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
+                            let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))\n"
+                            let boldedPart = secondPart.withBoldText(boldPartsOfString: [secondPart as NSString], font: font, boldFont: boldFont)
+                            
+                            reportLine.append(firstPart)
+                            reportLine.append(boldedPart)
+                            
+                            switch entry["category"]! {
+                                
+                            case "Mechanical":
+                                totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "Operational Scenario":
+                                totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "E-Stop":
+                                totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "System / Tech":
+                                totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "Deadtime":
+                                totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            default:
+                                break   //should not be reached
+                            }
+                            
+                            report.append(reportLine)
+                            
                         }
+                    }
+                }
 
-                        report.append(reportLine)
-                        
-                    }
-                }
-                
                 report.append(emptyLine)
                 
-                
-                for entry in timedNotes[hour]! {
-                    if entry.count > 1 {
-                        let noteLine = entry["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
-                        noteLine.append(emptyLine)
-                        report.append(noteLine)
+                if timedNotes[hour]!.count > 1 || sortedNotes[hour]!.count > 1 {
+                    let noteHeader = "\tNotes:".withBoldText(boldPartsOfString: ["\tNotes:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    report.append(noteHeader)
+                    report.append(emptyLine)
+                    
+                    
+                    for entry in timedNotes[hour]! {
+                        if entry.count > 1 {
+                            let noteLine = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                            noteLine.append(emptyLine)
+                            noteLine.insert(NSAttributedString(string: "\t"), at: 0)
+                            report.append(noteLine)
+                        }
                     }
+                    
+                    report.append(emptyLine)
+                    
+                    for entry in sortedNotes[hour]! {
+                        if entry.count > 1 {
+                            let noteLine = entry["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                            noteLine.append(emptyLine)
+                            noteLine.insert(NSAttributedString(string: "\t"), at: 0)
+                            report.append(noteLine)
+                        }
+                    }
+
+                    report.append(emptyLine)
                 }
-                
-                report.append(emptyLine)
 
             }
         } else if isNightsideReport {
@@ -341,50 +410,74 @@ class VesselDowntimeTextReportGenerator: NSObject {
                     break //Should not be reached
                 }
                 
-                for entry in sortedDowntimeEntries[hour]! {
-                    if entry.count > 1 {
-                        let reportLine = NSMutableAttributedString()
-                        
-                        let firstPart = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
-                        let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))\n"
-                        let boldedPart = secondPart.withBoldText(boldPartsOfString: [secondPart as NSString], font: font, boldFont: boldFont)
-                        
-                        reportLine.append(firstPart)
-                        reportLine.append(boldedPart)
-                        
-                        switch entry["category"]! {
+                if sortedDowntimeEntries[hour]!.count == 1 {
+                    let line = "No significant downtime for this hour.\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
+                    report.append(line)
+                } else {
+                    for entry in sortedDowntimeEntries[hour]! {
+                        if entry.count > 1 {
+                            let reportLine = NSMutableAttributedString()
                             
-                        case "Mechanical":
-                            totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "Operational Scenario":
-                            totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "E-Stop":
-                            totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "System / Tech":
-                            totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "Deadtime":
-                            totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        default:
-                            break   //should not be reached
+                            let firstPart = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
+                            let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))\n"
+                            let boldedPart = secondPart.withBoldText(boldPartsOfString: [secondPart as NSString], font: font, boldFont: boldFont)
+                            
+                            reportLine.append(firstPart)
+                            reportLine.append(boldedPart)
+                            
+                            switch entry["category"]! {
+                                
+                            case "Mechanical":
+                                totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "Operational Scenario":
+                                totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "E-Stop":
+                                totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "System / Tech":
+                                totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "Deadtime":
+                                totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            default:
+                                break   //should not be reached
+                            }
+                            
+                            report.append(reportLine)
+                            
                         }
-                        
-                        report.append(reportLine)
-                        
                     }
                 }
                 
+                
                 report.append(emptyLine)
                 
-                for entry in timedNotes[hour]! {
-                    if entry.count > 1 {
-                        let noteLine = entry["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
-                        noteLine.append(emptyLine)
-                        report.append(noteLine)
+                if timedNotes[hour]!.count > 1 || sortedNotes[hour]!.count > 1 {
+                    let noteHeader = "\tNotes:".withBoldText(boldPartsOfString: ["\tNotes:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    report.append(noteHeader)
+                    report.append(emptyLine)
+                    
+                    
+                    for entry in timedNotes[hour]! {
+                        if entry.count > 1 {
+                            let noteLine = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                            noteLine.append(emptyLine)
+                            noteLine.insert(NSAttributedString(string: "\t"), at: 0)
+                            report.append(noteLine)
+                        }
                     }
-                }
-                
-                report.append(emptyLine)
+                    
+                    report.append(emptyLine)
+                    
+                    for entry in sortedNotes[hour]! {
+                        if entry.count > 1 {
+                            let noteLine = entry["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                            noteLine.append(emptyLine)
+                            noteLine.insert(NSAttributedString(string: "\t"), at: 0)
+                            report.append(noteLine)
+                        }
+                    }
 
+                    report.append(emptyLine)
+                }
             }
         } else if isHootReport {
             for hour in hootHours {
@@ -421,67 +514,77 @@ class VesselDowntimeTextReportGenerator: NSObject {
 
                 }
                 
-                for entry in sortedDowntimeEntries[hour]! {
-                    if entry.count > 1 {
-                        let reportLine = NSMutableAttributedString()
-                        
-                        let firstPart = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
-                        let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))\n"
-                        let boldedPart = secondPart.withBoldText(boldPartsOfString: [secondPart as NSString], font: font, boldFont: boldFont)
-                        
-                        reportLine.append(firstPart)
-                        reportLine.append(boldedPart)
-                        
-                        switch entry["category"]! {
+                if sortedDowntimeEntries[hour]!.count == 1 {
+                    let line = "No significant downtime for this hour.\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
+                    report.append(line)
+                } else {
+                    for entry in sortedDowntimeEntries[hour]! {
+                        if entry.count > 1 {
+                            let reportLine = NSMutableAttributedString()
                             
-                        case "Mechanical":
-                            totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "Operational Scenario":
-                            totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "E-Stop":
-                            totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "System / Tech":
-                            totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        case "Deadtime":
-                            totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
-                        default:
-                            break   //should not be reached
+                            let firstPart = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont)
+                            let secondPart = "(\(entry["totalTime"]!), \(entry["category"]!))\n"
+                            let boldedPart = secondPart.withBoldText(boldPartsOfString: [secondPart as NSString], font: font, boldFont: boldFont)
+                            
+                            reportLine.append(firstPart)
+                            reportLine.append(boldedPart)
+                            
+                            switch entry["category"]! {
+                                
+                            case "Mechanical":
+                                totalMech = totalMech.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "Operational Scenario":
+                                totalOp = totalOp.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "E-Stop":
+                                totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "System / Tech":
+                                totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "Deadtime":
+                                totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            default:
+                                break   //should not be reached
+                            }
+                            
+                            report.append(reportLine)
+                            
                         }
-                        
-                        report.append(reportLine)
-                        
                     }
                 }
-                
+
                 report.append(emptyLine)
                 
-                for entry in timedNotes[hour]! {
-                    if entry.count > 1 {
-                        let noteLine = entry["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
-                        noteLine.append(emptyLine)
-                        report.append(noteLine)
+                if timedNotes[hour]!.count > 1 || sortedNotes[hour]!.count > 1 {
+                    let noteHeader = "\tNotes:".withBoldText(boldPartsOfString: ["\tNotes:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                    report.append(noteHeader)
+                    report.append(emptyLine)
+                    
+                    
+                    for entry in timedNotes[hour]! {
+                        if entry.count > 1 {
+                            let noteLine = "\(entry["startTime"]!) - \(entry["endTime"]!)\t\(entry["downtimeReason"]!)\t".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                            noteLine.append(emptyLine)
+                            noteLine.insert(NSAttributedString(string: "\t"), at: 0)
+                            report.append(noteLine)
+                        }
                     }
+                    
+                    report.append(emptyLine)
+                    
+                    for entry in sortedNotes[hour]! {
+                        if entry.count > 1 {
+                            let noteLine = entry["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+                            noteLine.append(emptyLine)
+                            noteLine.insert(NSAttributedString(string: "\t"), at: 0)
+                            report.append(noteLine)
+                        }
+                    }
+
+                    report.append(emptyLine)
                 }
-                
-                report.append(emptyLine)
 
             }
         }
             
-        
-        let noteHeader = "Notes:".withBoldText(boldPartsOfString: ["Notes:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
-        noteHeader.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, noteHeader.length))
-        noteHeader.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, noteHeader.length))
-        report.append(noteHeader)
-        report.append(emptyLine)
-        report.append(emptyLine)
-        
-        for note in blankNotes {
-            let noteLine = note["downtimeReason"]!.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
-            noteLine.append(emptyLine)
-            report.append(noteLine)
-        }
-        
         report.append(emptyLine)
         report.append(emptyLine)
         
@@ -563,6 +666,10 @@ class VesselDowntimeTextReportGenerator: NSObject {
             timedNotes.updateValue([[:]], forKey: key)
         }
 
+        for (key, _) in sortedNotes {
+            sortedNotes.updateValue([[:]], forKey: key)
+        }
+        
         blankNotes.removeAll()
         
         report = NSMutableAttributedString()

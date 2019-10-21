@@ -745,10 +745,12 @@ class VesselDowntimeViewController: NSTabViewController {
                 } else {
                     let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? NSTableCellView
                     
-                    if (cell?.textField?.stringValue.isEmpty)! {
-                        cell?.textField?.backgroundColor = NSColor.systemYellow
-                    } else {
-                        cell?.textField?.textColor = NSColor.systemRed
+                    if let value = cell?.textField?.stringValue {
+                        if value.isEmpty {
+                            cell?.textField?.backgroundColor = NSColor.systemYellow
+                        } else {
+                            cell?.textField?.textColor = NSColor.systemRed
+                        }
                     }
                 }
             }
