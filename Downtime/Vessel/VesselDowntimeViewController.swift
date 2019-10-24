@@ -694,20 +694,20 @@ class VesselDowntimeViewController: NSTabViewController {
                 case "startTime":
                     if entry[columnIdentifier]!.count == 4 && entry[columnIdentifier]!.isNumeric {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
-                        cell?.textField?.textColor = .black
+                        cell?.textField?.textColor = .textColor
                         cell?.textField?.backgroundColor = .clear
                     }
                 case "endTime":
                     if entry[columnIdentifier]!.count == 4 && entry[columnIdentifier]!.isNumeric {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
-                        cell?.textField?.textColor = .black
+                        cell?.textField?.textColor = .textColor
                         cell?.textField?.backgroundColor = .clear
                     }
 
                 case "downtimeReason":
                     if !entry[columnIdentifier]!.isEmpty && !entry[columnIdentifier]!.contains("%$") && !entry[columnIdentifier]!.contains("&#~") {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
-                        cell?.textField?.textColor = .black
+                        cell?.textField?.textColor = .textColor
                         cell?.textField?.backgroundColor = .clear
                     }
                 case "totalTime":
