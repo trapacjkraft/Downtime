@@ -94,9 +94,7 @@ class VesselDowntimeViewController: NSTabViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        downtimeTableView.rowHeight = 26
-        
+                
         fetchTimes()
         
         startTimeComboBox.usesDataSource = true
@@ -512,12 +510,12 @@ class VesselDowntimeViewController: NSTabViewController {
                 
                 if columnIdentifier == "startTime" || columnIdentifier == "endTime" || columnIdentifier == "downtimeReason" {
                     let cell = downtimeTableView.view(atColumn: columnNumbers[columnIdentifier]!, row: selectedRow, makeIfNecessary: false) as? NSTableCellView
-                    cell?.textField?.backgroundColor = NSColor.clear
-                    cell?.textField?.textColor = NSColor.black
+                    cell?.textField?.backgroundColor  = .clear
+                    cell?.textField?.textColor = .textColor
                 } else if let comboCell = sender.superview as? TotalTimesTableCellView {
-                    comboCell.totalTimesComboBox.backgroundColor = NSColor.clear
+                    comboCell.totalTimesComboBox.backgroundColor  = .clear
                 } else if let comboCell = sender.superview as? CategoryComboTableCellView {
-                    comboCell.categoryComboBox.backgroundColor = NSColor.clear
+                    comboCell.categoryComboBox.backgroundColor  = .clear
                 }
                 //Figure out why the colors are moving around
             }
@@ -695,31 +693,31 @@ class VesselDowntimeViewController: NSTabViewController {
                     if entry[columnIdentifier]!.count == 4 && entry[columnIdentifier]!.isNumeric {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
                         cell?.textField?.textColor = .textColor
-                        cell?.textField?.backgroundColor = .clear
+                        cell?.textField?.backgroundColor  = .clear
                     }
                 case "endTime":
                     if entry[columnIdentifier]!.count == 4 && entry[columnIdentifier]!.isNumeric {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
                         cell?.textField?.textColor = .textColor
-                        cell?.textField?.backgroundColor = .clear
+                        cell?.textField?.backgroundColor  = .clear
                     }
 
                 case "downtimeReason":
                     if !entry[columnIdentifier]!.isEmpty && !entry[columnIdentifier]!.contains("%$") && !entry[columnIdentifier]!.contains("&#~") {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
                         cell?.textField?.textColor = .textColor
-                        cell?.textField?.backgroundColor = .clear
+                        cell?.textField?.backgroundColor  = .clear
                     }
                 case "totalTime":
                     if !entry[columnIdentifier]!.isEmpty {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? TotalTimesTableCellView
-                        cell?.totalTimesComboBox.backgroundColor = .clear
+                        cell?.totalTimesComboBox.backgroundColor  = .clear
 
                     }
                 case "category":
                     if !entry[columnIdentifier]!.isEmpty {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? CategoryComboTableCellView
-                        cell?.categoryComboBox.backgroundColor = .clear
+                        cell?.categoryComboBox.backgroundColor  = .clear
                     }
                 default:
                     break
