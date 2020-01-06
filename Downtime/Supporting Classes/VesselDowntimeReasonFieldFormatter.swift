@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ReasonFieldFormatter: Formatter {
+class VesselDowntimeReasonFieldFormatter: Formatter {
 
     let nc = NotificationCenter.default
     

@@ -94,8 +94,8 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
 
     let emptyLine = ",\"\",,,,,\n"
     
-    let exportDirectory: String = NSHomeDirectory() + "/Documents/"
-    
+    let exportDirectory: String = NSHomeDirectory() + "/Documents/_vessel+rail-Reports/"
+
     func getDowntimeEntries(data: [[String: String]], shift: String, flex: Bool, extended: Bool) {
         allDowntimeEntries = data
         

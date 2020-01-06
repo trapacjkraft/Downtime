@@ -119,7 +119,7 @@ class VesselDowntimeTextReportGenerator: NSObject {
     
     let locale = NSLocale.autoupdatingCurrent
     
-    let exportDirectory: String = NSHomeDirectory() + "/Documents/"
+    let exportDirectory: String = NSHomeDirectory() + "/Documents/_vessel+rail-Reports/"
 
     let font = NSFont(name: "Calibri", size: 14.5)!
     let boldFont = NSFont(name: "Calibri-Bold", size: 14.5)!

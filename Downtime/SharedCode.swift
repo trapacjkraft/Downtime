@@ -108,6 +108,31 @@ extension Dictionary where Key == String, Value == String {
             return true
         } else { return false }
     }
+    
+    func isLightCurtainBreak() -> Bool {
+        if self["category"] == "Light Curtain Break" {
+            return true
+        } else { return false }
+    }
+
+    func isReland() -> Bool {
+        if self["category"] == "Reland" {
+            return true
+        } else { return false }
+    }
+    
+    func isASCfault() -> Bool {
+        if self["category"] == "ASC Fault" {
+            return true
+        } else { return false }
+    }
+    
+    func isAFlip() -> Bool {
+        if self["category"] == "Flip" {
+            return true
+        } else { return false }
+    }
+
 }
 
 extension Notification.Name {
@@ -117,11 +142,21 @@ extension Notification.Name {
     static let entryIsEStop = Notification.Name("entryIsEStop")
     static let entryIsSystem = Notification.Name("entryIsSystem")
     static let entryIsDeadtime = Notification.Name("entryIsDeadtime")
+    
     static let entryIsNote = Notification.Name("entryIsNote")
     
+    static let entryIsLightCurtainBreak = Notification.Name("entryIsLightCurtainBreak")
+    static let entryIsReland = Notification.Name("entryIsReland")
+    static let entryIsFlip = Notification.Name("entryIsFlip")
+    static let entryIsASCfault = Notification.Name("entryIsASCfault")
+    
     static let checkEntriesForSaveCharacters = Notification.Name("checkEntriesForSaveCharacters")
-    static let entriesContainSaveCharacters = Notification.Name("entriesContainSaveCharacters")
-    static let entriesDoNotContainSaveCharacters = Notification.Name("entriesDoNotContainSaveCharacters")
+    
+    static let vesselRailEntriesContainSaveCharacters = Notification.Name("vesselRailEntriesContainSaveCharacters")
+    static let vesselRailEntriesDoNotContainSaveCharacters = Notification.Name("entriesDoNotContainSaveCharacters")
+    
+    static let landsideEntriesContainSaveCharacters = Notification.Name("landsideEntriesContainSaveCharacters")
+    static let landsideEntriesDoNotContainSaveCharacters = Notification.Name("landsideEntriesDoNotContainSaveCharacters")
     
     static let downtimeEntriesChanged = Notification.Name("downtimeEntriesChanged")
     

@@ -12,27 +12,72 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     let nc = NotificationCenter.default
+    let fm = FileManager.default
     var okToQuit = false
+    var blockQuitFromLandside = false
+    var blockQuitFromVesselRail = false
+    
+    let vesselRailExportDirectory: String = NSHomeDirectory() + "/Documents/_vessel+rail-Reports/"
+    let landsideExportDirectory: String = NSHomeDirectory() + "/Documents/_landside-reports/"
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        nc.addObserver(self, selector: #selector(canQuit), name: Notification.Name.entriesDoNotContainSaveCharacters, object: nil)
-        nc.addObserver(self, selector: #selector(cannotQuit), name: Notification.Name.entriesContainSaveCharacters, object: nil)
+        nc.addObserver(self, selector: #selector(shouldBlockFromVesselRail), name: Notification.Name.vesselRailEntriesContainSaveCharacters, object: nil)
+        nc.addObserver(self, selector: #selector(shouldBlockFromLandside), name: .landsideEntriesContainSaveCharacters, object: nil)
 
+        nc.addObserver(self, selector: #selector(okToQuitFromVesselRail), name: Notification.Name.vesselRailEntriesDoNotContainSaveCharacters, object: nil)
+        nc.addObserver(self, selector: #selector(okToQuitFromLandside), name: .landsideEntriesDoNotContainSaveCharacters, object: nil)
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { self.nc.post(name: Notification.Name.checkEntriesForSaveCharacters, object: nil) }
         
+        if !fm.fileExists(atPath: vesselRailExportDirectory) {
+            do { try fm.createDirectory(atPath: vesselRailExportDirectory, withIntermediateDirectories: true, attributes: nil) } catch {
+                NSLog("Could not create export directory: \(error)")
+                Swift.print(error)
+                Swift.print("Destination directory: " + vesselRailExportDirectory)
+            }
+        }
+        
+        if !fm.fileExists(atPath: landsideExportDirectory) {
+            do { try fm.createDirectory(atPath: landsideExportDirectory, withIntermediateDirectories: true, attributes: nil) } catch {
+                NSLog("Could not create export directory: \(error)")
+                Swift.print(error)
+                Swift.print("Destination directory: " + landsideExportDirectory)
+            }
+        }
+
     }
     
-    @objc func canQuit() {
-        okToQuit = true
-    }
-
-    @objc func cannotQuit() {
+    @objc func shouldBlockFromVesselRail() {
         okToQuit = false
+        blockQuitFromVesselRail = true
+    }
+    
+    @objc func shouldBlockFromLandside() {
+        okToQuit = false
+        blockQuitFromLandside = true
+    }
+    
+    @objc func okToQuitFromVesselRail() {
+        blockQuitFromVesselRail = false
+    }
+    
+    @objc func okToQuitFromLandside() {
+        blockQuitFromLandside = false
+    }
+    
+    
+    
+    func checkIfOKtoQuit() {
+        if !blockQuitFromLandside && !blockQuitFromVesselRail {
+            okToQuit = true
+        } else { okToQuit = false }
     }
     
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         
         nc.post(name: Notification.Name.checkEntriesForSaveCharacters, object: nil)
+        
+        checkIfOKtoQuit()
         
         if okToQuit {
             return .terminateNow
