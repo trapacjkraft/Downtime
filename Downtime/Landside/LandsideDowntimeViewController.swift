@@ -91,11 +91,13 @@ class LandsideDowntimeViewController: NSTabViewController {
     var dateFetcherTimer = Timer()
     var saveDataTimer = Timer()
     
-    var timeFieldFormatter = TimeFieldFormatter()
+    var timeFieldFormatter = NumberFieldFormatter()
     var landsideReasonFieldFormatter = LandsideDowntimeReasonFieldFormatter()
     
     let lsTotalsView: LandsideTotalsViewController = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("LandsideTotalsViewController")) as! LandsideTotalsViewController
 
+    let saveDataDragWellView: SaveDataDragWellViewController = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("SaveDataDragWellViewController")) as! SaveDataDragWellViewController
+    var saveDataPath = String()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -135,6 +137,9 @@ class LandsideDowntimeViewController: NSTabViewController {
         nc.addObserver(self, selector: #selector(selectNote), name: .entryIsNote, object: nil)
         nc.addObserver(self, selector: #selector(deselectCategory), name: .entryIsNotPrefixed, object: nil)
         
+        nc.addObserver(self, selector: #selector(receiveHandoff), name: .displayLandsideSaveDataView, object: nil)
+        nc.addObserver(self, selector: #selector(loadHandoffData(_:)), name: .loadLandsideSaveData, object: nil)
+                
         checkFieldsForSaveCharacters()
         
     }
@@ -228,6 +233,83 @@ class LandsideDowntimeViewController: NSTabViewController {
         
     }
     
+    @objc func loadHandoffData(_ notification: Notification) {
+        var fileContents = String()
+        var fileModificationDate = Date()
+        var loadPath = String()
+        
+        if let dict = notification.userInfo as NSDictionary? {
+            if let path = dict["path"] as? String {
+                loadPath = path
+            }
+        } else {
+            let alert = NSAlert()
+            alert.messageText = "No save path!"
+            alert.informativeText = "The save path was empty."
+            alert.runModal()
+        }
+        
+        if fm.fileExists(atPath: loadPath) {
+            do {
+                let fileAttributes = try fm.attributesOfItem(atPath: loadPath) as [FileAttributeKey:Any]
+                fileModificationDate = fileAttributes[FileAttributeKey.modificationDate] as! Date
+            } catch {
+                Swift.print(error)
+            }
+            
+            let now = Date()
+            
+            let difference = now.timeIntervalSince(fileModificationDate)
+            
+            if difference < 43200 {
+                fileContents = String(data: fm.contents(atPath: loadPath)!, encoding: .utf8) ?? ""
+                var downtimeData = fileContents.components(separatedBy: "&#~")
+                downtimeData.removeLast()
+                
+                for dataEntry in downtimeData {
+                    
+                    var data = dataEntry.components(separatedBy: "%$")
+                    data.removeLast()
+                    
+                    var entry: [String: String] = [
+                        "startTime":"",
+                        "sortTime":"",
+                        "endTime":"",
+                        "downtimeReason":"",
+                        "category":""
+                    ]
+
+                    entry.updateValue(data[0], forKey: "startTime")
+                    entry.updateValue(data[1], forKey: "sortTime")
+                    entry.updateValue(data[2], forKey: "endTime")
+                    entry.updateValue(data[3], forKey: "downtimeReason")
+                    entry.updateValue(data[4], forKey: "category")
+                    
+                    if !downtimeEntries.contains(entry) {
+                        downtimeEntries.append(entry)
+                    }
+
+                }
+                
+            } else {
+                do {
+                    try fm.removeItem(at: URL(fileURLWithPath: loadPath))
+                } catch {
+                    Swift.print(error)
+                }
+            }
+        
+            
+        }
+
+        saveDataDragWellView.dismissView(saveDataDragWellView)
+
+    }
+
+    @objc func receiveHandoff() {
+        presentAsSheet(saveDataDragWellView)
+    }
+        
     @objc func checkFieldsForSaveCharacters() {
         
         var badFieldCount = 0

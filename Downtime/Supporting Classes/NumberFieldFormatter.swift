@@ -1,5 +1,5 @@
 //
-//  TimeFieldFormatter.swift
+//  NumberFieldFormatter.swift
 //  Downtime
 //
 //  Created by Joshua Kraft on 7/20/19.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class TimeFieldFormatter: Formatter {
+class NumberFieldFormatter: Formatter {
 
     let allowedLength = 4
     

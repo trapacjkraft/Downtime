@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		420875FC22E40F8900DF0278 /* TimeFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */; };
+		4202418F23C873AD00CF9BC1 /* DragWellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4202418E23C873AD00CF9BC1 /* DragWellView.swift */; };
+		4202419123C883AA00CF9BC1 /* SaveDataDragWellViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4202419023C883AA00CF9BC1 /* SaveDataDragWellViewController.swift */; };
+		420875FC22E40F8900DF0278 /* NumberFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420875FB22E40F8900DF0278 /* NumberFieldFormatter.swift */; };
 		421C222A23091135002DBCEF /* Calibri.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 421C222823091134002DBCEF /* Calibri.ttf */; };
 		421C222B23091135002DBCEF /* Calibrib.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 421C222923091135002DBCEF /* Calibrib.ttf */; };
 		421DBB1B233E07A200DF505B /* DowntimeTutorial.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 421DBB1A233E07A200DF505B /* DowntimeTutorial.pdf */; };
@@ -32,7 +34,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFieldFormatter.swift; sourceTree = "<group>"; };
+		4202418E23C873AD00CF9BC1 /* DragWellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragWellView.swift; sourceTree = "<group>"; };
+		4202419023C883AA00CF9BC1 /* SaveDataDragWellViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveDataDragWellViewController.swift; sourceTree = "<group>"; };
+		420875FB22E40F8900DF0278 /* NumberFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberFieldFormatter.swift; sourceTree = "<group>"; };
 		421C222823091134002DBCEF /* Calibri.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Calibri.ttf; sourceTree = "<group>"; };
 		421C222923091135002DBCEF /* Calibrib.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Calibrib.ttf; sourceTree = "<group>"; };
 		421DBB1A233E07A200DF505B /* DowntimeTutorial.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DowntimeTutorial.pdf; sourceTree = "<group>"; };
@@ -92,7 +96,7 @@
 		423F147A23C1833A00DBC100 /* Supporting Classes */ = {
 			isa = PBXGroup;
 			children = (
-				420875FB22E40F8900DF0278 /* TimeFieldFormatter.swift */,
+				420875FB22E40F8900DF0278 /* NumberFieldFormatter.swift */,
 				42E8C5E422ACC8B100544392 /* StartTimes.swift */,
 				42E8C5E622ACD22E00544392 /* EndTimes.swift */,
 				42F32DCA22B4DC0800976FFC /* CategoryComboTableCellView.swift */,
@@ -124,6 +128,8 @@
 			children = (
 				42ADA65822A659F400689489 /* AppDelegate.swift */,
 				42E8C5E022ACBCB500544392 /* SharedCode.swift */,
+				4202418E23C873AD00CF9BC1 /* DragWellView.swift */,
+				4202419023C883AA00CF9BC1 /* SaveDataDragWellViewController.swift */,
 				42E8C5E222ACC87500544392 /* Vessel */,
 				423F147923C1831700DBC100 /* Landside */,
 				423F147A23C1833A00DBC100 /* Supporting Classes */,
@@ -230,6 +236,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4202419123C883AA00CF9BC1 /* SaveDataDragWellViewController.swift in Sources */,
 				42CE448223C191DA00290EBC /* LandsideDowntimeReasonFieldFormatter.swift in Sources */,
 				426A436022AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift in Sources */,
 				42E8C5E122ACBCB500544392 /* SharedCode.swift in Sources */,
@@ -242,9 +249,10 @@
 				42E8C5E522ACC8B100544392 /* StartTimes.swift in Sources */,
 				42F32DCF22B4E4CA00976FFC /* TotalTimesTableCellView.swift in Sources */,
 				42CE447F23C183D500290EBC /* LandsideTotalsViewController.swift in Sources */,
+				4202418F23C873AD00CF9BC1 /* DragWellView.swift in Sources */,
 				42F32DCB22B4DC0800976FFC /* CategoryComboTableCellView.swift in Sources */,
 				42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */,
-				420875FC22E40F8900DF0278 /* TimeFieldFormatter.swift in Sources */,
+				420875FC22E40F8900DF0278 /* NumberFieldFormatter.swift in Sources */,
 				42D07B962307A43300FAE867 /* VesselDowntimeReasonFieldFormatter.swift in Sources */,
 				426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */,
 			);
@@ -393,7 +401,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trapac.Downtime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -414,7 +422,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trapac.Downtime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

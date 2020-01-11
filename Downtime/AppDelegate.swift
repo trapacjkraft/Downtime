@@ -19,6 +19,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     let vesselRailExportDirectory: String = NSHomeDirectory() + "/Documents/_vessel+rail-Reports/"
     let landsideExportDirectory: String = NSHomeDirectory() + "/Documents/_landside-reports/"
+   
+    let vesselSaveDataPath: String = NSHomeDirectory() + "/Documents/vessel_rail_downtime_session_data.txt"
+    let landsideSaveDataPath: String = NSHomeDirectory() + "/Documents/landside_downtime_session_data.txt"
+
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         nc.addObserver(self, selector: #selector(shouldBlockFromVesselRail), name: Notification.Name.vesselRailEntriesContainSaveCharacters, object: nil)
@@ -98,5 +102,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func displayTutorial(_ sender: Any) {
         NSWorkspace.shared.openFile(Bundle.main.path(forResource: "DowntimeTutorial", ofType: "pdf")!)
     }
+    
+    @IBAction func generateVesselRailHandoff(_ sender: Any) {
+        NSWorkspace.shared.openFile(vesselSaveDataPath, withApplication: "TextEdit", andDeactivate: false)
+        let alert = NSAlert()
+        alert.messageText = "Handoff Instructions"
+        alert.informativeText = "The file just opened is your vessel or rail save data for Downtime. Email this file to whoever you are handing off the operation to and have them use the \"Receive Handoff Data...\" option in the \"Handoff...\" menu to load the data."
+        alert.runModal()
+    }
+    
+    @IBAction func generateLandsideHandoff(_ sender: Any) {
+        NSWorkspace.shared.openFile(landsideSaveDataPath, withApplication: "TextEdit", andDeactivate: false)
+        let alert = NSAlert()
+        alert.messageText = "Handoff Instructions"
+        alert.informativeText = "The file just opened is your landside save data for Downtime. Email this file to whoever you are handing off the operation to and have them use the \"Receive Handoff Data...\" option in the \"Handoff...\" menu to load the data."
+        alert.runModal()
+        
+    }
+    
+    @IBAction func receiveHandoffData(_ sender: Any) {
+        if let tabViewController = NSApplication.shared.mainWindow?.contentViewController as? NSTabViewController {
+            if tabViewController.selectedTabViewItemIndex == 0 {
+                nc.post(name: .displayVesselSaveDataView, object: nil)
+            } else if tabViewController.selectedTabViewItemIndex == 1 {
+                nc.post(name: .displayLandsideSaveDataView, object: nil)
+            }
+        }
+    }
+    
 }
+
 

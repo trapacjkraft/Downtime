@@ -161,6 +161,13 @@ extension Notification.Name {
     static let downtimeEntriesChanged = Notification.Name("downtimeEntriesChanged")
     
     static let indicateBadEntries = Notification.Name("indicateBadEntries")
+    
+    static let displayVesselSaveDataView = Notification.Name("displayVesselSaveDataView")
+    static let displayLandsideSaveDataView = Notification.Name("displayLandsideSaveDataView")
+    
+    static let loadVesselSaveData = Notification.Name("loadVesselSaveData")
+    static let loadLandsideSaveData = Notification.Name("loadLandsideSaveData")
+        
 }
 
 class SharedCode: NSObject {

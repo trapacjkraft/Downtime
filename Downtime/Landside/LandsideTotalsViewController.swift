@@ -54,12 +54,13 @@ class LandsideTotalsViewController: NSViewController {
     let reportGenerator = LandsideDowntimeTextReportGenerator()
 
     var textFields = [NSTextField]()
+    let totalFieldsFormatter = NumberFieldFormatter()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         flipsTextField.stringValue = countFlipsInDowntime()
         
-        // create an array of the text fields to ensure all values are captured
+        // create an array of the totals text fields to ensure all values are captured
         textFields.removeAll()
         textFields.append(totalDeliveryTextField)
         textFields.append(totalReceivedTextField)
@@ -67,6 +68,11 @@ class LandsideTotalsViewController: NSViewController {
         textFields.append(outboundInventoryTextField)
         textFields.append(inboundInventoryTextField)
         textFields.append(emptyInventoryTextField)
+        
+        for field in textFields {
+            field.formatter = totalFieldsFormatter
+        }
+        
     }
     
     func getDowntimeEntries(data: [[String: String]]) {
