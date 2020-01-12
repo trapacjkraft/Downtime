@@ -19,9 +19,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     let vesselRailExportDirectory: String = NSHomeDirectory() + "/Documents/_vessel+rail-Reports/"
     let landsideExportDirectory: String = NSHomeDirectory() + "/Documents/_landside-reports/"
+    let handoffCopyDirectory: String = NSHomeDirectory() + "/Documents/_handoff/"
    
     let vesselSaveDataPath: String = NSHomeDirectory() + "/Documents/vessel_rail_downtime_session_data.txt"
     let landsideSaveDataPath: String = NSHomeDirectory() + "/Documents/landside_downtime_session_data.txt"
+    let vesselHandoffPath: String = NSHomeDirectory() + "/Documents/_handoff/vessel_rail_downtime_session_data.txt"
+    let landsideHandoffPath: String = NSHomeDirectory() + "/Documents/_handoff/landside_downtime_session_data.txt"
 
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -46,6 +49,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 NSLog("Could not create export directory: \(error)")
                 Swift.print(error)
                 Swift.print("Destination directory: " + landsideExportDirectory)
+            }
+        }
+        
+        if !fm.fileExists(atPath: handoffCopyDirectory) {
+            do { try fm.createDirectory(atPath: handoffCopyDirectory, withIntermediateDirectories: true, attributes: nil) } catch {
+                NSLog("Could not create handoff directory: \(error)")
+                Swift.print(error)
+                Swift.print("Destination directory: " + handoffCopyDirectory)
             }
         }
 
@@ -104,7 +115,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @IBAction func generateVesselRailHandoff(_ sender: Any) {
-        NSWorkspace.shared.openFile(vesselSaveDataPath, withApplication: "TextEdit", andDeactivate: false)
+        
+        if fm.fileExists(atPath: vesselHandoffPath) {
+            do { try fm.removeItem(atPath: vesselHandoffPath) } catch {
+                NSLog("Could not remove vessel handoff data: \(error)")
+                Swift.print(error)
+            }
+        }
+        
+        do { try fm.copyItem(atPath: vesselSaveDataPath, toPath: vesselHandoffPath) } catch {
+            NSLog("Could not copy item: \(error)")
+            Swift.print(error)
+        }
+        
+        NSWorkspace.shared.openFile(vesselHandoffPath, withApplication: "TextEdit", andDeactivate: false)
+
         let alert = NSAlert()
         alert.messageText = "Handoff Instructions"
         alert.informativeText = "The file just opened is your vessel or rail save data for Downtime. Email this file to whoever you are handing off the operation to and have them use the \"Receive Handoff Data...\" option in the \"Handoff...\" menu to load the data."
@@ -112,7 +137,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @IBAction func generateLandsideHandoff(_ sender: Any) {
-        NSWorkspace.shared.openFile(landsideSaveDataPath, withApplication: "TextEdit", andDeactivate: false)
+        
+        if fm.fileExists(atPath: landsideHandoffPath) {
+            do { try fm.removeItem(atPath: landsideHandoffPath) } catch {
+                NSLog("Could not remove vessel handoff data: \(error)")
+                Swift.print(error)
+            }
+        }
+
+        do { try fm.copyItem(atPath: landsideSaveDataPath, toPath: landsideHandoffPath) } catch {
+            NSLog("Could not copy item: \(error)")
+            Swift.print(error)
+        }
+        
+        NSWorkspace.shared.openFile(landsideHandoffPath, withApplication: "TextEdit", andDeactivate: false)
+        
         let alert = NSAlert()
         alert.messageText = "Handoff Instructions"
         alert.informativeText = "The file just opened is your landside save data for Downtime. Email this file to whoever you are handing off the operation to and have them use the \"Receive Handoff Data...\" option in the \"Handoff...\" menu to load the data."
