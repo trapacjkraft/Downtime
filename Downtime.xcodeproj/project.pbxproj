@@ -12,7 +12,6 @@
 		420875FC22E40F8900DF0278 /* NumberFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420875FB22E40F8900DF0278 /* NumberFieldFormatter.swift */; };
 		421C222A23091135002DBCEF /* Calibri.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 421C222823091134002DBCEF /* Calibri.ttf */; };
 		421C222B23091135002DBCEF /* Calibrib.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 421C222923091135002DBCEF /* Calibrib.ttf */; };
-		421DBB1B233E07A200DF505B /* DowntimeTutorial.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 421DBB1A233E07A200DF505B /* DowntimeTutorial.pdf */; };
 		423F147C23C1838C00DBC100 /* LandsideDowntimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 423F147B23C1838C00DBC100 /* LandsideDowntimeViewController.swift */; };
 		426A436022AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */; };
 		426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */; };
@@ -21,6 +20,7 @@
 		42ADA65B22A659F400689489 /* VesselDowntimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */; };
 		42ADA65D22A659F500689489 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 42ADA65C22A659F500689489 /* Assets.xcassets */; };
 		42ADA66022A659F500689489 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 42ADA65E22A659F500689489 /* Main.storyboard */; };
+		42C2544023CAD5CC004D4353 /* DowntimeTutorial.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 42C2543F23CAD5CC004D4353 /* DowntimeTutorial.pdf */; };
 		42CE447F23C183D500290EBC /* LandsideTotalsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42CE447E23C183D500290EBC /* LandsideTotalsViewController.swift */; };
 		42CE448223C191DA00290EBC /* LandsideDowntimeReasonFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42CE448123C191DA00290EBC /* LandsideDowntimeReasonFieldFormatter.swift */; };
 		42D07B962307A43300FAE867 /* VesselDowntimeReasonFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D07B952307A43300FAE867 /* VesselDowntimeReasonFieldFormatter.swift */; };
@@ -39,7 +39,6 @@
 		420875FB22E40F8900DF0278 /* NumberFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberFieldFormatter.swift; sourceTree = "<group>"; };
 		421C222823091134002DBCEF /* Calibri.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Calibri.ttf; sourceTree = "<group>"; };
 		421C222923091135002DBCEF /* Calibrib.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Calibrib.ttf; sourceTree = "<group>"; };
-		421DBB1A233E07A200DF505B /* DowntimeTutorial.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DowntimeTutorial.pdf; sourceTree = "<group>"; };
 		423F147B23C1838C00DBC100 /* LandsideDowntimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandsideDowntimeViewController.swift; sourceTree = "<group>"; };
 		426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeSpreadsheetGenerator.swift; sourceTree = "<group>"; };
 		426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeTextReportGenerator.swift; sourceTree = "<group>"; };
@@ -51,6 +50,7 @@
 		42ADA65F22A659F500689489 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		42ADA66122A659F500689489 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		42ADA66222A659F500689489 /* Downtime.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Downtime.entitlements; sourceTree = "<group>"; };
+		42C2543F23CAD5CC004D4353 /* DowntimeTutorial.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DowntimeTutorial.pdf; sourceTree = "<group>"; };
 		42CE447E23C183D500290EBC /* LandsideTotalsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandsideTotalsViewController.swift; sourceTree = "<group>"; };
 		42CE448123C191DA00290EBC /* LandsideDowntimeReasonFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandsideDowntimeReasonFieldFormatter.swift; sourceTree = "<group>"; };
 		42D07B952307A43300FAE867 /* VesselDowntimeReasonFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeReasonFieldFormatter.swift; sourceTree = "<group>"; };
@@ -138,7 +138,7 @@
 				42ADA65E22A659F500689489 /* Main.storyboard */,
 				42ADA66122A659F500689489 /* Info.plist */,
 				42ADA66222A659F500689489 /* Downtime.entitlements */,
-				421DBB1A233E07A200DF505B /* DowntimeTutorial.pdf */,
+				42C2543F23CAD5CC004D4353 /* DowntimeTutorial.pdf */,
 			);
 			path = Downtime;
 			sourceTree = "<group>";
@@ -224,7 +224,7 @@
 				421C222B23091135002DBCEF /* Calibrib.ttf in Resources */,
 				42ADA65D22A659F500689489 /* Assets.xcassets in Resources */,
 				421C222A23091135002DBCEF /* Calibri.ttf in Resources */,
-				421DBB1B233E07A200DF505B /* DowntimeTutorial.pdf in Resources */,
+				42C2544023CAD5CC004D4353 /* DowntimeTutorial.pdf in Resources */,
 				42ADA66022A659F500689489 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,7 +401,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.1;
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trapac.Downtime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -422,7 +422,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.1;
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trapac.Downtime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
