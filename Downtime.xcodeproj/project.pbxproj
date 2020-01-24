@@ -12,10 +12,17 @@
 		420875FC22E40F8900DF0278 /* NumberFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420875FB22E40F8900DF0278 /* NumberFieldFormatter.swift */; };
 		421C222A23091135002DBCEF /* Calibri.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 421C222823091134002DBCEF /* Calibri.ttf */; };
 		421C222B23091135002DBCEF /* Calibrib.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 421C222923091135002DBCEF /* Calibrib.ttf */; };
+		421DD5FB23D55AE500A1BF75 /* DowntimeTutorial.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 421DD5FA23D55AE400A1BF75 /* DowntimeTutorial.pdf */; };
 		423F147C23C1838C00DBC100 /* LandsideDowntimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 423F147B23C1838C00DBC100 /* LandsideDowntimeViewController.swift */; };
 		426A436022AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */; };
 		426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */; };
-		429036CD23CAF46500CE6DAA /* DowntimeTutorial.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 429036CC23CAF46500CE6DAA /* DowntimeTutorial.pdf */; };
+		429D024823D2B24600D4059A /* RailDowntimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429D024723D2B24600D4059A /* RailDowntimeViewController.swift */; };
+		429D024A23D2B26100D4059A /* RailTotalsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429D024923D2B26100D4059A /* RailTotalsViewController.swift */; };
+		429D024C23D2B4BE00D4059A /* RailDowntimeTextReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429D024B23D2B4BE00D4059A /* RailDowntimeTextReportGenerator.swift */; };
+		429D024E23D2B54800D4059A /* RailDowntimeReasonFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429D024D23D2B54800D4059A /* RailDowntimeReasonFieldFormatter.swift */; };
+		429D025023D2B5C200D4059A /* RailTotalTimesTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429D024F23D2B5C200D4059A /* RailTotalTimesTableCellView.swift */; };
+		429D025323D2B5EA00D4059A /* RailTableTotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429D025223D2B5EA00D4059A /* RailTableTotalTimes.swift */; };
+		429D025523D2B5F400D4059A /* RailEnteredTotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429D025423D2B5F400D4059A /* RailEnteredTotalTimes.swift */; };
 		42A0851D23C2E7A40075CAFE /* LandsideDowntimeTextReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A0851C23C2E7A40075CAFE /* LandsideDowntimeTextReportGenerator.swift */; };
 		42ADA65922A659F400689489 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42ADA65822A659F400689489 /* AppDelegate.swift */; };
 		42ADA65B22A659F400689489 /* VesselDowntimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */; };
@@ -27,10 +34,10 @@
 		42E8C5E122ACBCB500544392 /* SharedCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E022ACBCB500544392 /* SharedCode.swift */; };
 		42E8C5E522ACC8B100544392 /* StartTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E422ACC8B100544392 /* StartTimes.swift */; };
 		42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E622ACD22E00544392 /* EndTimes.swift */; };
-		42E8C5E922ACDADA00544392 /* EnteredTotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E822ACDADA00544392 /* EnteredTotalTimes.swift */; };
+		42E8C5E922ACDADA00544392 /* VesselEnteredTotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E8C5E822ACDADA00544392 /* VesselEnteredTotalTimes.swift */; };
 		42F32DCB22B4DC0800976FFC /* CategoryComboTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F32DCA22B4DC0800976FFC /* CategoryComboTableCellView.swift */; };
-		42F32DCD22B4E38300976FFC /* TableTotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F32DCC22B4E38300976FFC /* TableTotalTimes.swift */; };
-		42F32DCF22B4E4CA00976FFC /* TotalTimesTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F32DCE22B4E4CA00976FFC /* TotalTimesTableCellView.swift */; };
+		42F32DCD22B4E38300976FFC /* VesselTableTotalTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F32DCC22B4E38300976FFC /* VesselTableTotalTimes.swift */; };
+		42F32DCF22B4E4CA00976FFC /* VesselTotalTimesTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F32DCE22B4E4CA00976FFC /* VesselTotalTimesTableCellView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,10 +46,17 @@
 		420875FB22E40F8900DF0278 /* NumberFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberFieldFormatter.swift; sourceTree = "<group>"; };
 		421C222823091134002DBCEF /* Calibri.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Calibri.ttf; sourceTree = "<group>"; };
 		421C222923091135002DBCEF /* Calibrib.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Calibrib.ttf; sourceTree = "<group>"; };
+		421DD5FA23D55AE400A1BF75 /* DowntimeTutorial.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DowntimeTutorial.pdf; sourceTree = "<group>"; };
 		423F147B23C1838C00DBC100 /* LandsideDowntimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandsideDowntimeViewController.swift; sourceTree = "<group>"; };
 		426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeSpreadsheetGenerator.swift; sourceTree = "<group>"; };
 		426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselDowntimeTextReportGenerator.swift; sourceTree = "<group>"; };
-		429036CC23CAF46500CE6DAA /* DowntimeTutorial.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DowntimeTutorial.pdf; sourceTree = "<group>"; };
+		429D024723D2B24600D4059A /* RailDowntimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailDowntimeViewController.swift; sourceTree = "<group>"; };
+		429D024923D2B26100D4059A /* RailTotalsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailTotalsViewController.swift; sourceTree = "<group>"; };
+		429D024B23D2B4BE00D4059A /* RailDowntimeTextReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailDowntimeTextReportGenerator.swift; sourceTree = "<group>"; };
+		429D024D23D2B54800D4059A /* RailDowntimeReasonFieldFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailDowntimeReasonFieldFormatter.swift; sourceTree = "<group>"; };
+		429D024F23D2B5C200D4059A /* RailTotalTimesTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailTotalTimesTableCellView.swift; sourceTree = "<group>"; };
+		429D025223D2B5EA00D4059A /* RailTableTotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailTableTotalTimes.swift; sourceTree = "<group>"; };
+		429D025423D2B5F400D4059A /* RailEnteredTotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailEnteredTotalTimes.swift; sourceTree = "<group>"; };
 		42A0851C23C2E7A40075CAFE /* LandsideDowntimeTextReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandsideDowntimeTextReportGenerator.swift; sourceTree = "<group>"; };
 		42ADA65522A659F400689489 /* Downtime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Downtime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		42ADA65822A659F400689489 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -57,10 +71,10 @@
 		42E8C5E022ACBCB500544392 /* SharedCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCode.swift; sourceTree = "<group>"; };
 		42E8C5E422ACC8B100544392 /* StartTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTimes.swift; sourceTree = "<group>"; };
 		42E8C5E622ACD22E00544392 /* EndTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndTimes.swift; sourceTree = "<group>"; };
-		42E8C5E822ACDADA00544392 /* EnteredTotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnteredTotalTimes.swift; sourceTree = "<group>"; };
+		42E8C5E822ACDADA00544392 /* VesselEnteredTotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselEnteredTotalTimes.swift; sourceTree = "<group>"; };
 		42F32DCA22B4DC0800976FFC /* CategoryComboTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryComboTableCellView.swift; sourceTree = "<group>"; };
-		42F32DCC22B4E38300976FFC /* TableTotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableTotalTimes.swift; sourceTree = "<group>"; };
-		42F32DCE22B4E4CA00976FFC /* TotalTimesTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalTimesTableCellView.swift; sourceTree = "<group>"; };
+		42F32DCC22B4E38300976FFC /* VesselTableTotalTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselTableTotalTimes.swift; sourceTree = "<group>"; };
+		42F32DCE22B4E4CA00976FFC /* VesselTotalTimesTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VesselTotalTimesTableCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,11 +114,22 @@
 				42E8C5E422ACC8B100544392 /* StartTimes.swift */,
 				42E8C5E622ACD22E00544392 /* EndTimes.swift */,
 				42F32DCA22B4DC0800976FFC /* CategoryComboTableCellView.swift */,
-				42F32DCE22B4E4CA00976FFC /* TotalTimesTableCellView.swift */,
+				42F32DCE22B4E4CA00976FFC /* VesselTotalTimesTableCellView.swift */,
+				429D024F23D2B5C200D4059A /* RailTotalTimesTableCellView.swift */,
 				42D07B952307A43300FAE867 /* VesselDowntimeReasonFieldFormatter.swift */,
 				42CE448123C191DA00290EBC /* LandsideDowntimeReasonFieldFormatter.swift */,
+				429D024D23D2B54800D4059A /* RailDowntimeReasonFieldFormatter.swift */,
 			);
 			path = "Supporting Classes";
+			sourceTree = "<group>";
+		};
+		429D025123D2B5D100D4059A /* Data Sources */ = {
+			isa = PBXGroup;
+			children = (
+				429D025223D2B5EA00D4059A /* RailTableTotalTimes.swift */,
+				429D025423D2B5F400D4059A /* RailEnteredTotalTimes.swift */,
+			);
+			path = "Data Sources";
 			sourceTree = "<group>";
 		};
 		42ADA64C22A659F400689489 = {
@@ -131,6 +156,7 @@
 				4202418E23C873AD00CF9BC1 /* DragWellView.swift */,
 				4202419023C883AA00CF9BC1 /* SaveDataDragWellViewController.swift */,
 				42E8C5E222ACC87500544392 /* Vessel */,
+				42F1D06223D2B05800A5A6E4 /* Rail */,
 				423F147923C1831700DBC100 /* Landside */,
 				423F147A23C1833A00DBC100 /* Supporting Classes */,
 				421C222523091115002DBCEF /* Fonts */,
@@ -138,7 +164,7 @@
 				42ADA65E22A659F500689489 /* Main.storyboard */,
 				42ADA66122A659F500689489 /* Info.plist */,
 				42ADA66222A659F500689489 /* Downtime.entitlements */,
-				429036CC23CAF46500CE6DAA /* DowntimeTutorial.pdf */,
+				421DD5FA23D55AE400A1BF75 /* DowntimeTutorial.pdf */,
 			);
 			path = Downtime;
 			sourceTree = "<group>";
@@ -149,18 +175,29 @@
 				42ADA65A22A659F400689489 /* VesselDowntimeViewController.swift */,
 				426F48A822D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift */,
 				426A435F22AE1510004141DA /* VesselDowntimeSpreadsheetGenerator.swift */,
-				42E8C5E322ACC88500544392 /* DataSources */,
+				42F1D06323D2B08800A5A6E4 /* Data Sources */,
 			);
 			path = Vessel;
 			sourceTree = "<group>";
 		};
-		42E8C5E322ACC88500544392 /* DataSources */ = {
+		42F1D06223D2B05800A5A6E4 /* Rail */ = {
 			isa = PBXGroup;
 			children = (
-				42E8C5E822ACDADA00544392 /* EnteredTotalTimes.swift */,
-				42F32DCC22B4E38300976FFC /* TableTotalTimes.swift */,
+				429D024723D2B24600D4059A /* RailDowntimeViewController.swift */,
+				429D024923D2B26100D4059A /* RailTotalsViewController.swift */,
+				429D024B23D2B4BE00D4059A /* RailDowntimeTextReportGenerator.swift */,
+				429D025123D2B5D100D4059A /* Data Sources */,
 			);
-			path = DataSources;
+			path = Rail;
+			sourceTree = "<group>";
+		};
+		42F1D06323D2B08800A5A6E4 /* Data Sources */ = {
+			isa = PBXGroup;
+			children = (
+				42F32DCC22B4E38300976FFC /* VesselTableTotalTimes.swift */,
+				42E8C5E822ACDADA00544392 /* VesselEnteredTotalTimes.swift */,
+			);
+			path = "Data Sources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -224,7 +261,7 @@
 				421C222B23091135002DBCEF /* Calibrib.ttf in Resources */,
 				42ADA65D22A659F500689489 /* Assets.xcassets in Resources */,
 				421C222A23091135002DBCEF /* Calibri.ttf in Resources */,
-				429036CD23CAF46500CE6DAA /* DowntimeTutorial.pdf in Resources */,
+				421DD5FB23D55AE500A1BF75 /* DowntimeTutorial.pdf in Resources */,
 				42ADA66022A659F500689489 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -242,19 +279,26 @@
 				42E8C5E122ACBCB500544392 /* SharedCode.swift in Sources */,
 				42ADA65B22A659F400689489 /* VesselDowntimeViewController.swift in Sources */,
 				423F147C23C1838C00DBC100 /* LandsideDowntimeViewController.swift in Sources */,
+				429D024823D2B24600D4059A /* RailDowntimeViewController.swift in Sources */,
+				429D025023D2B5C200D4059A /* RailTotalTimesTableCellView.swift in Sources */,
 				42ADA65922A659F400689489 /* AppDelegate.swift in Sources */,
 				42A0851D23C2E7A40075CAFE /* LandsideDowntimeTextReportGenerator.swift in Sources */,
-				42E8C5E922ACDADA00544392 /* EnteredTotalTimes.swift in Sources */,
-				42F32DCD22B4E38300976FFC /* TableTotalTimes.swift in Sources */,
+				42E8C5E922ACDADA00544392 /* VesselEnteredTotalTimes.swift in Sources */,
+				429D025523D2B5F400D4059A /* RailEnteredTotalTimes.swift in Sources */,
+				42F32DCD22B4E38300976FFC /* VesselTableTotalTimes.swift in Sources */,
+				429D024C23D2B4BE00D4059A /* RailDowntimeTextReportGenerator.swift in Sources */,
 				42E8C5E522ACC8B100544392 /* StartTimes.swift in Sources */,
-				42F32DCF22B4E4CA00976FFC /* TotalTimesTableCellView.swift in Sources */,
+				42F32DCF22B4E4CA00976FFC /* VesselTotalTimesTableCellView.swift in Sources */,
 				42CE447F23C183D500290EBC /* LandsideTotalsViewController.swift in Sources */,
+				429D025323D2B5EA00D4059A /* RailTableTotalTimes.swift in Sources */,
 				4202418F23C873AD00CF9BC1 /* DragWellView.swift in Sources */,
 				42F32DCB22B4DC0800976FFC /* CategoryComboTableCellView.swift in Sources */,
 				42E8C5E722ACD22E00544392 /* EndTimes.swift in Sources */,
 				420875FC22E40F8900DF0278 /* NumberFieldFormatter.swift in Sources */,
 				42D07B962307A43300FAE867 /* VesselDowntimeReasonFieldFormatter.swift in Sources */,
+				429D024E23D2B54800D4059A /* RailDowntimeReasonFieldFormatter.swift in Sources */,
 				426F48A922D44F1300E0C8DD /* VesselDowntimeTextReportGenerator.swift in Sources */,
+				429D024A23D2B26100D4059A /* RailTotalsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,13 +439,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = b1;
 				DEVELOPMENT_TEAM = 575V4XYC4S;
 				INFOPLIST_FILE = Downtime/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.3;
+				MARKETING_VERSION = 2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trapac.Downtime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -416,13 +461,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = b1;
 				DEVELOPMENT_TEAM = 575V4XYC4S;
 				INFOPLIST_FILE = Downtime/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.3;
+				MARKETING_VERSION = 2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trapac.Downtime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

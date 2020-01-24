@@ -1,15 +1,14 @@
 //
-//  VesselDowntimeTextReportGenerator.swift
+//  RailDowntimeTextReportGenerator.swift
 //  Downtime
 //
-//  Created by Joshua Kraft on 7/8/19.
-//  Copyright © 2019 Joshua Kraft. All rights reserved.
+//  Created by Joshua Kraft on 1/17/20.
+//  Copyright © 2020 Joshua Kraft. All rights reserved.
 //
 
 import Cocoa
 
-class VesselDowntimeTextReportGenerator: NSObject {
-    
+class RailDowntimeTextReportGenerator: NSObject {
     var allDowntimeEntries = [[String: String]]()
     var blankNotes = [[String: String]]()
     
@@ -94,6 +93,10 @@ class VesselDowntimeTextReportGenerator: NSObject {
         "2300":[[:]]
     ]
 
+    var shiftDetails = [String: String]()
+    var firstHalfTotals = [String: String]()
+    var shiftTotals = [String: String]()
+    
     let sortedDowntimeKeyForValue = ["00":"0000", "01":"0100", "02":"0200", "03":"0300", "04":"0400", "05":"0500", "06":"0600", "07":"0700", "08":"0800", "09":"0900", "10":"1000", "11":"1100", "12":"1200", "13":"1300", "14":"1400", "15":"1500", "16":"1600", "17":"1700", "18":"1800", "19":"1900", "20":"2000", "21":"2100", "22":"2200", "23":"2300", "24":"2400"]
     
     var daysideHours = ["0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600"]
@@ -113,26 +116,44 @@ class VesselDowntimeTextReportGenerator: NSObject {
     var totalOp = NSDecimalNumber.zero
     var totalEStop = NSDecimalNumber.zero
     var totalSys = NSDecimalNumber.zero
+    var totalRMG = NSDecimalNumber.zero
     var totalDead = NSDecimalNumber.zero
     
     let roundingBehavior = NSDecimalNumberHandler(roundingMode: .plain, scale: 1, raiseOnExactness: false, raiseOnOverflow: false, raiseOnUnderflow: false, raiseOnDivideByZero: true)
     
     let locale = NSLocale.autoupdatingCurrent
     
-    let exportDirectory: String = NSHomeDirectory() + "/Documents/_vessel-reports/"
+    let exportDirectory: String = NSHomeDirectory() + "/Documents/_rail-reports/"
 
     let font = NSFont(name: "Calibri", size: 14.5)!
     let boldFont = NSFont(name: "Calibri-Bold", size: 14.5)!
+
+    func getTotals(firstHalf: [String: String], shift: [String: String]) {
+        firstHalfTotals.removeAll()
+        shiftTotals.removeAll()
+        
+        firstHalfTotals = firstHalf
+        shiftTotals = shift
+    }
     
-    func getDowntimeEntries(data: [[String: String]], shift: String, flex: Bool, extended: Bool) {
+    func getDetails(details: [String: String]) {
+        shiftDetails.removeAll()
+        
+        shiftDetails = details
+    }
+
+    
+    func getDowntimeEntries(data: [[String: String]], selectedShift: [String: Bool], flex: Bool, extended: Bool) {
         allDowntimeEntries = data
         
-        if shift == "day" {
-            isDaysideReport = true
-        } else if shift == "night" {
-            isNightsideReport = true
-        } else if shift == "hoot" {
-            isHootReport = true
+        for (id, value) in selectedShift {
+            if id == "day" {
+                isDaysideReport = value
+            } else if id == "night" {
+                isNightsideReport = value
+            } else if id == "hoot" {
+                isHootReport = value
+            }
         }
         
         isFlexStart = flex
@@ -183,9 +204,8 @@ class VesselDowntimeTextReportGenerator: NSObject {
         
         generateReport()
     }
-
+    
     func generateReport() {
-        
         let emptyLine = "\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
         
         let noteHeader = "Notes:".withBoldText(boldPartsOfString: ["Notes:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
@@ -298,6 +318,8 @@ class VesselDowntimeTextReportGenerator: NSObject {
                                 totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             case "System / Tech":
                                 totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "RMG Fault":
+                                totalRMG = totalRMG.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             case "Deadtime":
                                 totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             default:
@@ -340,7 +362,6 @@ class VesselDowntimeTextReportGenerator: NSObject {
 
                     report.append(emptyLine)
                 }
-
             }
         } else if isNightsideReport {
             for hour in nightsideHours {
@@ -435,6 +456,8 @@ class VesselDowntimeTextReportGenerator: NSObject {
                                 totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             case "System / Tech":
                                 totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "RMG Fault":
+                                totalRMG = totalRMG.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             case "Deadtime":
                                 totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             default:
@@ -539,6 +562,8 @@ class VesselDowntimeTextReportGenerator: NSObject {
                                 totalEStop = totalEStop.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             case "System / Tech":
                                 totalSys = totalSys.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
+                            case "RMG Fault":
+                                totalRMG = totalRMG.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             case "Deadtime":
                                 totalDead = totalDead.adding(NSDecimalNumber(string: entry["totalTime"]!).rounding(accordingToBehavior: roundingBehavior))
                             default:
@@ -601,29 +626,145 @@ class VesselDowntimeTextReportGenerator: NSObject {
         totalDowntime = totalDowntime.adding(totalOp)
         totalDowntime = totalDowntime.adding(totalEStop)
         totalDowntime = totalDowntime.adding(totalSys)
+        totalDowntime = totalDowntime.adding(totalRMG)
         totalDowntime = totalDowntime.adding(totalDead)
-        
+
         let mechString = totalMech.description(withLocale: locale)
         let opString = totalOp.description(withLocale: locale)
         let estopString = totalEStop.description(withLocale: locale)
         let sysString = totalSys.description(withLocale: locale)
+        let rmgString = totalRMG.description(withLocale: locale)
         let deadString = totalDead.description(withLocale: locale)
         
         let totalString = totalDowntime.description(withLocale: locale)
-        
+
         report.append("Total Mechanical\t\(mechString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
         report.append("Total Operational\t\(opString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
         report.append("Total E-Stop Time\t\(estopString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
         report.append("Total System/Tech\t\(sysString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
+        report.append("Total RMG Fault Time\t\(rmgString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
         report.append("Total Deadtime\t\t\(deadString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
         report.append(emptyLine)
         report.append("Total Downtime\t\t\(totalString) Hours\n".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString)
+
+        
+        report.append(emptyLine)
+        report.append(emptyLine)
+        report.append(emptyLine)
+
+        let firstHalfOperator = shiftDetails["firstHalfOperator"] ?? ""
+        let secondHalfOperator = shiftDetails["secondHalfOperator"] ?? ""
+        let operatorString = "Crane Operators:\t\t1st : \(firstHalfOperator) / 2nd : \(secondHalfOperator)"
+        let operatorLine = operatorString.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        report.append(operatorLine)
+        report.append(emptyLine)
+        
+        let firstHalfStrads = shiftDetails["firstHalfStrads"] ?? ""
+        let secondHalfStrads = shiftDetails["secondHalfStrads"] ?? ""
+        let stradString = "Strads for Rail Operation:\t\(firstHalfStrads) / \(secondHalfStrads)"
+        let stradLine = stradString.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        report.append(stradLine)
+        report.append(emptyLine)
+        
+        let conveyors = shiftDetails["conveyors"] ?? ""
+        let conveyorString = "Conveyors in Operation:\t\(conveyors)"
+        let conveyorLine = conveyorString.withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        report.append(conveyorLine)
+        report.append(emptyLine)
+        report.append(emptyLine)
+        
+        let firstHalfHeader = "1st Half Total Moves:".withBoldText(boldPartsOfString: ["1st Half Total Moves:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        firstHalfHeader.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, firstHalfHeader.length))
+        firstHalfHeader.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, firstHalfHeader.length))
+        report.append(firstHalfHeader)
+        report.append(emptyLine)
+        
+        var firstHalfDischarge = firstHalfTotals["firstHalfDischarge"] ?? ""
+        var firstHalfLoadout = firstHalfTotals["firstHalfLoadout"] ?? ""
+        var firstHalfRehandle = firstHalfTotals["firstHalfRehandle"] ?? ""
+        var firstHalfTotal = firstHalfTotals["firstHalfTotal"] ?? ""
+        
+        if firstHalfDischarge.isEmpty {
+            firstHalfDischarge = "0"
+        }
+        
+        if firstHalfLoadout.isEmpty {
+            firstHalfLoadout = "0"
+        }
+
+        if firstHalfRehandle.isEmpty {
+            firstHalfRehandle = "0"
+        }
+
+        if firstHalfTotal.isEmpty {
+            firstHalfTotal = "0"
+        }
+
+        
+        let firstHalfDischargeLine = "Total Discharge:\t\t\(firstHalfDischarge)".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        let firstHalfLoadoutLine = "Total Loadout:\t\t\(firstHalfLoadout)".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        let firstHalfRehandleLine = "Resets:\t\t\t\(firstHalfRehandle)".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        let firstHalfTotalLine = "Total Moves:\t\t\(firstHalfTotal)".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        
+        report.append(firstHalfDischargeLine)
+        report.append(emptyLine)
+        report.append(firstHalfLoadoutLine)
+        report.append(emptyLine)
+        report.append(firstHalfRehandleLine)
+        report.append(emptyLine)
+        report.append(firstHalfTotalLine)
+        report.append(emptyLine)
+        report.append(emptyLine)
+        report.append(emptyLine)
+        
+        let moveTotalsHeader = "Shift Total Moves:".withBoldText(boldPartsOfString: ["Shift Total Moves:"], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        moveTotalsHeader.addAttribute(.underlineColor, value: NSColor.black, range: NSMakeRange(0, moveTotalsHeader.length))
+        moveTotalsHeader.addAttribute(.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue), range: NSMakeRange(0, moveTotalsHeader.length))
+        report.append(moveTotalsHeader)
+        report.append(emptyLine)
+        
+        var shiftDischarge = shiftTotals["shiftDischarge"] ?? ""
+        var shiftLoadout = shiftTotals["shiftLoadout"] ?? ""
+        var shiftRehandle = shiftTotals["shiftRehandle"] ?? ""
+        var shiftTotalMoves = shiftTotals["shiftTotals"] ?? ""
+        
+        if shiftDischarge.isEmpty {
+            shiftDischarge = "0"
+        }
+        
+        if shiftLoadout.isEmpty {
+            shiftLoadout = "0"
+        }
+        
+        if shiftRehandle.isEmpty {
+            shiftRehandle = "0"
+        }
+
+        if shiftTotalMoves.isEmpty {
+            shiftTotalMoves = "0"
+        }
+
+        let shiftDischargeLine = "Total Discharge:\t\t\(shiftDischarge)".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        let shiftLoadoutLine = "Total Loadout:\t\t\(shiftLoadout)".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        let shiftRehandleLine = "Resets:\t\t\t\(shiftRehandle)".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        let shiftTotalMovesLine = "Total Moves:\t\t\(shiftTotalMoves)".withBoldText(boldPartsOfString: [], font: font, boldFont: boldFont) as! NSMutableAttributedString
+        
+        report.append(shiftDischargeLine)
+        report.append(emptyLine)
+        report.append(shiftLoadoutLine)
+        report.append(emptyLine)
+        report.append(shiftRehandleLine)
+        report.append(emptyLine)
+        report.append(shiftTotalMovesLine)
+        report.append(emptyLine)
+        report.append(emptyLine)
+        report.append(emptyLine)
         
         openFile()
+        
     }
     
     func openFile() {
-        
         let ws = NSWorkspace.shared
         
         let date = Date()
@@ -633,7 +774,7 @@ class VesselDowntimeTextReportGenerator: NSObject {
         var dateString = df.string(from: date)
         dateString = dateString.replacingOccurrences(of: "/", with: "-")
         dateString = dateString.replacingOccurrences(of: ":", with: "")
-        let fileName = "Vessel Downtime Report " + dateString + ".rtf"
+        let fileName = "Rail Downtime Report " + dateString + ".rtf"
         let destination = exportDirectory + fileName
         var contents = Data()
         
@@ -672,9 +813,14 @@ class VesselDowntimeTextReportGenerator: NSObject {
         
         blankNotes.removeAll()
         
+        shiftDetails.removeAll()
+        firstHalfTotals.removeAll()
+        shiftTotals.removeAll()
+        
         report = NSMutableAttributedString()
         totalOp = 0.0
         totalSys = 0.0
+        totalRMG = 0.0
         totalEStop = 0.0
         totalMech = 0.0
         totalDead = 0.0
@@ -682,6 +828,8 @@ class VesselDowntimeTextReportGenerator: NSObject {
         isNightsideReport = false
         isHootReport = false
         
+        isFlexStart = false
+        isExtendedShift = false
+
     }
-    
 }

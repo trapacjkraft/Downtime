@@ -317,7 +317,7 @@ class LandsideDowntimeTextReportGenerator: NSObject {
         var dateString = df.string(from: date)
         dateString = dateString.replacingOccurrences(of: "/", with: "-")
         dateString = dateString.replacingOccurrences(of: ":", with: "")
-        let fileName = "Downtime Report " + dateString + ".rtf"
+        let fileName = "Landside Downtime Report " + dateString + ".rtf"
         let destination = exportDirectory + fileName
         var contents = Data()
 

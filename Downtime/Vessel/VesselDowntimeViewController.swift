@@ -32,7 +32,7 @@ class VesselDowntimeViewController: NSTabViewController {
     
     let startTimes = StartTimes()
     let endTimes = EndTimes()
-    let totalTimes = EnteredTotalTimes()
+    let totalTimes = VesselEnteredTotalTimes()
     
     let spreadsheetGenerator = VesselDowntimeSpreadsheetGenerator()
     let textReportGenerator = VesselDowntimeTextReportGenerator()
@@ -139,6 +139,7 @@ class VesselDowntimeViewController: NSTabViewController {
         nc.addObserver(self, selector: #selector(deselectCategory), name: .entryIsNotPrefixed, object: nil)
         
         nc.addObserver(self, selector: #selector(receiveHandoff), name: .displayVesselSaveDataView, object: nil)
+        nc.addObserver(self, selector: #selector(closeSaveDataView), name: .dismissSaveDataView, object: nil)
         nc.addObserver(self, selector: #selector(loadHandoffData(_:)), name: .loadVesselSaveData, object: nil)
                 
         checkFieldsForSaveCharacters()
@@ -163,7 +164,7 @@ class VesselDowntimeViewController: NSTabViewController {
         }
         
         let fileContents = sessionDataContents.joined()
-        let fileName = "vessel_rail_downtime_session_data.txt"
+        let fileName = "vessel_downtime_session_data.txt"
         
         let destination = saveDirectory + fileName
         
@@ -178,7 +179,7 @@ class VesselDowntimeViewController: NSTabViewController {
     @objc func loadData() {
         var fileContents = String()
         var fileModificationDate = Date()
-        let loadPath: String = NSHomeDirectory() + "/Documents/vessel_rail_downtime_session_data.txt"
+        let loadPath: String = NSHomeDirectory() + "/Documents/vessel_downtime_session_data.txt"
 
         if fm.fileExists(atPath: loadPath) {
             do {
@@ -315,6 +316,10 @@ class VesselDowntimeViewController: NSTabViewController {
         presentAsSheet(saveDataDragWellView)
     }
         
+    @objc func closeSaveDataView() {
+        saveDataDragWellView.dismiss(saveDataDragWellView)
+    }
+
     @objc func checkFieldsForSaveCharacters() {
         
         var badFieldCount = 0
@@ -602,7 +607,7 @@ class VesselDowntimeViewController: NSTabViewController {
                         cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[1]
                     }
                     cell?.textField?.textColor = .textColor
-                } else if let comboCell = sender.superview as? TotalTimesTableCellView {
+                } else if let comboCell = sender.superview as? VesselTotalTimesTableCellView {
                     if selectedRow % 2 == 0 {
                         comboCell.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[0]
                     } else {
@@ -808,7 +813,7 @@ class VesselDowntimeViewController: NSTabViewController {
                     }
                 case "totalTime":
                     if !entry[columnIdentifier]!.isEmpty {
-                        let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? TotalTimesTableCellView
+                        let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? VesselTotalTimesTableCellView
                         cell?.totalTimesComboBox.backgroundColor  = .clear
 
                     }
@@ -833,7 +838,7 @@ class VesselDowntimeViewController: NSTabViewController {
             for id in columnIDs {
 
                 if id == "totalTime" {
-                    let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? TotalTimesTableCellView
+                    let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? VesselTotalTimesTableCellView
                     cell?.totalTimesComboBox.backgroundColor = NSColor.systemYellow
                 } else if id == "category" {
                     let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? CategoryComboTableCellView
@@ -964,7 +969,7 @@ extension VesselDowntimeViewController: NSTableViewDataSource, NSTableViewDelega
         }
         
         if cell!.identifier!.rawValue == "totalTime" {
-            let comboCell = cell as! TotalTimesTableCellView
+            let comboCell = cell as! VesselTotalTimesTableCellView
             
             comboCell.totalTimes.startTime = item["startTime"]!
             comboCell.totalTimes.endTime = item["endTime"]!

@@ -94,7 +94,7 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
 
     let emptyLine = ",\"\",,,,,\n"
     
-    let exportDirectory: String = NSHomeDirectory() + "/Documents/_vessel+rail-Reports/"
+    let exportDirectory: String = NSHomeDirectory() + "/Documents/_vessel-reports/"
 
     func getDowntimeEntries(data: [[String: String]], shift: String, flex: Bool, extended: Bool) {
         allDowntimeEntries = data
@@ -357,7 +357,7 @@ class VesselDowntimeSpreadsheetGenerator: NSObject {
         var dateString = df.string(from: date)
         dateString = dateString.replacingOccurrences(of: "/", with: "-")
         dateString = dateString.replacingOccurrences(of: ":", with: "")
-        let fileName = "Downtime Report " + dateString + ".csv"
+        let fileName = "Vessel Downtime Report " + dateString + ".csv"
         let destination = exportDirectory + fileName
         let contents = report.joined()
         

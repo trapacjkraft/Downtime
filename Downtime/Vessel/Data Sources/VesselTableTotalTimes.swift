@@ -1,26 +1,29 @@
 //
-//  EnteredTotalTimes.swift
+//  VesselTableTotalTimes.swift
 //  Downtime
 //
-//  Created by Joshua Kraft on 6/9/19.
+//  Created by Joshua Kraft on 6/15/19.
 //  Copyright © 2019 Joshua Kraft. All rights reserved.
 //
 
 import Cocoa
 
-class EnteredTotalTimes: NSObject, NSComboBoxDataSource {
+class VesselTableTotalTimes: NSObject, NSComboBoxDataSource, NSComboBoxDelegate {
     
     var times = [String]()
     
     var startTime = String()
     var endTime = String()
-        
+    
     func getTotalTimes(start: String, end: String) {
-                
+        
         times.removeAll()
         
         startTime = start
         endTime = end
+        
+        guard !startTime.isEmpty else { return }
+        guard !endTime.isEmpty else { return }
         
         let startingHour = Int(startTime.substring(toIndex: startTime.count - 2))
         var endingHour = Int(endTime.substring(toIndex: endTime.count - 2))
@@ -62,11 +65,17 @@ class EnteredTotalTimes: NSObject, NSComboBoxDataSource {
     }
     
     func comboBox(_ comboBox: NSComboBox, objectValueForItemAt index: Int) -> Any? {
-        
-        if times.count == 0 {
-            return 0
+        if !times.isEmpty {
+            return times[index]
         }
-        return times[index]
+        return ""
+    }
+    
+    func comboBoxWillPopUp(_ notification: Notification) {
+        
+        if endTime.length == 4 && endTime.isNumeric {
+            getTotalTimes(start: startTime, end: endTime)
+        }
     }
 
 }

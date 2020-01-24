@@ -12,11 +12,13 @@ class SaveDataDragWellViewController: NSViewController {
 
     @IBOutlet var dragWell: DragWellView!
     
+    let nc = NotificationCenter.default
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    @IBAction func dismissView(_ sender: Any) {
+    @IBAction @objc func dismissView(_ sender: Any) {
         if dragWell != nil {
             dragWell.clearFile()
             dismiss(self)

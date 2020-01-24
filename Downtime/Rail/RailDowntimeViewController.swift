@@ -1,43 +1,46 @@
 //
-//  LandsideDowntimeViewController.swift
+//  RailDowntimeViewController.swift
 //  Downtime
 //
-//  Created by Joshua Kraft on 1/4/20.
+//  Created by Joshua Kraft on 1/17/20.
 //  Copyright © 2020 Joshua Kraft. All rights reserved.
 //
 
 import Cocoa
 
-class LandsideDowntimeViewController: NSTabViewController {
+class RailDowntimeViewController: NSTabViewController {
 
     @IBOutlet var startTimeComboBox: NSComboBox!
     @IBOutlet var endTimeComboBox: NSComboBox!
-    @IBOutlet var downtimeReasonTextField: NSTextField!
+    @IBOutlet var downtimeReasonField: NSTextField!
+    @IBOutlet var totalTimeComboBox: NSComboBox!
     @IBOutlet var categoryComboBox: NSComboBox!
     @IBOutlet var addDowntimeButton: NSButton!
     
     @IBOutlet var downtimeTableView: NSTableView!
     
-    @IBOutlet var removeDowntimeButton: NSButton!
-    
-    @IBOutlet var flexHourCheckBox: NSButton!
-    @IBOutlet var extendedCheckBox: NSButton!
+    @IBOutlet var flexHourCheck: NSButton!
+    @IBOutlet var extendedCheck: NSButton!
     
     @IBOutlet var dayShiftRadioButton: NSButton!
     @IBOutlet var nightShiftRadioButton: NSButton!
     @IBOutlet var hootShiftRadioButton: NSButton!
     
-    @IBOutlet var generateTextReportButton: NSButton!
+    @IBOutlet var textReportGeneratorButton: NSButton!
+    @IBOutlet var removalButton: NSButton!
     
     let startTimes = StartTimes()
     let endTimes = EndTimes()
+    let totalTimes = RailEnteredTotalTimes()
     
-    let selectionChangedNotification = NSTableView.selectionDidChangeNotification
+    let textReportGenerator = RailDowntimeTextReportGenerator()
+    
+    let selectionChangedNotication = NSTableView.selectionDidChangeNotification
     let popupWillAppearNotification = NSComboBox.willPopUpNotification
     
     let nc = NotificationCenter.default
     let fm = FileManager.default
-    
+
     var downtimeEntries = [[String: String]]() {
         didSet {
             downtimeEntries = downtimeEntries.sorted(by: {
@@ -45,12 +48,6 @@ class LandsideDowntimeViewController: NSTabViewController {
                 if $0.isANote() && $0["sortTime"]!.isEmpty && $0["endTime"]!.isEmpty { //If entry is a note with no times, sort to the end of the table
                     return false
                 } else if $1.isANote() && $1["sortTime"]!.isEmpty && $1["endTime"]!.isEmpty { //If entry is a note with no times, sort to the end of the table
-                    return true
-                }
-                
-                if $0.isAFlip() { //If entry is a flip, sort to the end of the table
-                    return false
-                } else if $1.isAFlip() {
                     return true
                 }
                 
@@ -67,8 +64,6 @@ class LandsideDowntimeViewController: NSTabViewController {
                     self.nc.post(name: .downtimeEntriesChanged, object: nil)
                 })
             }
-            
-            checkFieldsForSaveCharacters()
         }
     }
     
@@ -78,12 +73,19 @@ class LandsideDowntimeViewController: NSTabViewController {
         "startTime": 0,
         "endTime": 1,
         "downtimeReason": 2,
-        "category": 3
+        "totalTime": 3,
+        "category": 4
     ]
-
+    
     var shiftOptions = [
         "flex": true,
         "extended": false,
+    ]
+    
+    var selectedShift = [
+        "day": false,
+        "night": false,
+        "hoot": false
     ]
 
     var entriesHaveSaveCharacters = false
@@ -92,20 +94,18 @@ class LandsideDowntimeViewController: NSTabViewController {
     var saveDataTimer = Timer()
     
     var timeFieldFormatter = NumberFieldFormatter()
-    var landsideReasonFieldFormatter = LandsideDowntimeReasonFieldFormatter()
+    var railReasonFieldFormatter = RailDowntimeReasonFieldFormatter()
     
-    let lsTotalsView: LandsideTotalsViewController = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("LandsideTotalsViewController")) as! LandsideTotalsViewController
-
+    let railTotalsView: RailTotalsViewController = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("RailTotalsViewController")) as! RailTotalsViewController
+    
     let saveDataDragWellView: SaveDataDragWellViewController = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("SaveDataDragWellViewController")) as! SaveDataDragWellViewController
     var saveDataPath = String()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //fetch the start and end times
+
         fetchTimes()
         
-        //set up start and end time combo boxes
         startTimeComboBox.usesDataSource = true
         startTimeComboBox.dataSource = startTimes
         startTimeComboBox.formatter = timeFieldFormatter
@@ -115,33 +115,41 @@ class LandsideDowntimeViewController: NSTabViewController {
         endTimeComboBox.dataSource = endTimes
         endTimeComboBox.formatter = timeFieldFormatter
         endTimeComboBox.reloadData()
+
+        downtimeReasonField.formatter = railReasonFieldFormatter
         
-        downtimeReasonTextField.formatter = landsideReasonFieldFormatter
+        totalTimeComboBox.usesDataSource = true
+        totalTimeComboBox.dataSource = totalTimes
+        totalTimeComboBox.reloadData()
         
         dateFetcherTimer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(updateTimes), userInfo: nil, repeats: true)
         saveDataTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(saveData), userInfo: nil, repeats: true)
 
-        nc.addObserver(self, selector: #selector(enableRemovalButton), name: selectionChangedNotification, object: nil)
-                
+        nc.addObserver(self, selector: #selector(enableRemovalButton), name: selectionChangedNotication, object: nil)
+        nc.addObserver(self, selector: #selector(fetchTotalTimes), name: popupWillAppearNotification, object: nil)
+        
         nc.addObserver(self, selector: #selector(checkDataAfterEntriesChanged), name: .downtimeEntriesChanged, object: nil)
         nc.addObserver(self, selector: #selector(checkFieldsForSaveCharacters), name: Notification.Name.checkEntriesForSaveCharacters, object: nil)
         nc.addObserver(self, selector: #selector(indicateFromAppDelegate), name: Notification.Name.indicateBadEntries, object: nil)
-
+        
         nc.addObserver(self, selector: #selector(saveData), name: NSApplication.willTerminateNotification, object: nil)
         nc.addObserver(self, selector: #selector(loadData), name: NSApplication.didFinishLaunchingNotification, object: nil)
-
-        nc.addObserver(self, selector: #selector(selectLightCurtainBreak), name: .entryIsLightCurtainBreak, object: nil)
-        nc.addObserver(self, selector: #selector(selectReland), name: .entryIsReland, object: nil)
-        nc.addObserver(self, selector: #selector(selectFlip), name: .entryIsFlip, object: nil)
-        nc.addObserver(self, selector: #selector(selectASCfault), name: .entryIsASCfault, object: nil)
+        
+        nc.addObserver(self, selector: #selector(selectMechanical), name: .entryIsMechanical, object: nil)
+        nc.addObserver(self, selector: #selector(selectOperational), name: .entryIsOperational, object: nil)
+        nc.addObserver(self, selector: #selector(selectEStop), name: .entryIsEStop, object: nil)
+        nc.addObserver(self, selector: #selector(selectSystem), name: .entryIsSystem, object: nil)
+        nc.addObserver(self, selector: #selector(selectRMGfault), name: .entryIsRMGfault, object: nil)
+        nc.addObserver(self, selector: #selector(selectDeadtime), name: .entryIsDeadtime, object: nil)
         nc.addObserver(self, selector: #selector(selectNote), name: .entryIsNote, object: nil)
         nc.addObserver(self, selector: #selector(deselectCategory), name: .entryIsNotPrefixed, object: nil)
         
-        nc.addObserver(self, selector: #selector(receiveHandoff), name: .displayLandsideSaveDataView, object: nil)
+        nc.addObserver(self, selector: #selector(receiveHandoff), name: .displayRailSaveDataView, object: nil)
         nc.addObserver(self, selector: #selector(closeSaveDataView), name: .dismissSaveDataView, object: nil)
-        nc.addObserver(self, selector: #selector(loadHandoffData(_:)), name: .loadLandsideSaveData, object: nil)
+        nc.addObserver(self, selector: #selector(loadHandoffData(_:)), name: .loadRailSaveData, object: nil)
                 
         checkFieldsForSaveCharacters()
+
         
     }
     
@@ -149,13 +157,14 @@ class LandsideDowntimeViewController: NSTabViewController {
         
         let saveDirectory: String = NSHomeDirectory() + "/Documents/"
         var sessionDataContents = [String]()
-
+        
         for entry in downtimeEntries {
             var data = String()
             data.append("\(entry["startTime"]!)%$")
             data.append("\(entry["sortTime"]!)%$")
             data.append("\(entry["endTime"]!)%$")
             data.append("\(entry["downtimeReason"]!)%$")
+            data.append("\(entry["totalTime"]!)%$")
             data.append("\(entry["category"]!)%$&#~")
             
             sessionDataContents.append(data)
@@ -163,8 +172,8 @@ class LandsideDowntimeViewController: NSTabViewController {
         }
         
         let fileContents = sessionDataContents.joined()
-        let fileName = "landside_downtime_session_data.txt"
-
+        let fileName = "rail_downtime_session_data.txt"
+        
         let destination = saveDirectory + fileName
         
         do {
@@ -178,7 +187,7 @@ class LandsideDowntimeViewController: NSTabViewController {
     @objc func loadData() {
         var fileContents = String()
         var fileModificationDate = Date()
-        let loadPath: String = NSHomeDirectory() + "/Documents/landside_downtime_session_data.txt"
+        let loadPath: String = NSHomeDirectory() + "/Documents/rail_downtime_session_data.txt"
 
         if fm.fileExists(atPath: loadPath) {
             do {
@@ -207,6 +216,7 @@ class LandsideDowntimeViewController: NSTabViewController {
                         "sortTime":"",
                         "endTime":"",
                         "downtimeReason":"",
+                        "totalTime":"",
                         "category":""
                     ]
 
@@ -214,7 +224,8 @@ class LandsideDowntimeViewController: NSTabViewController {
                     entry.updateValue(data[1], forKey: "sortTime")
                     entry.updateValue(data[2], forKey: "endTime")
                     entry.updateValue(data[3], forKey: "downtimeReason")
-                    entry.updateValue(data[4], forKey: "category")
+                    entry.updateValue(data[4], forKey: "totalTime")
+                    entry.updateValue(data[5], forKey: "category")
                     
                     downtimeEntries.append(entry)
                     
@@ -230,13 +241,22 @@ class LandsideDowntimeViewController: NSTabViewController {
         
             
         }
-
         
+        
+    }
+
+    @objc func receiveHandoff() {
+        presentAsSheet(saveDataDragWellView)
+    }
+    
+    @objc func closeSaveDataView() {
+        saveDataDragWellView.dismiss(saveDataDragWellView)
     }
     
     @objc func loadHandoffData(_ notification: Notification) {
         var fileContents = String()
         var fileModificationDate = Date()
+        
         var loadPath = String()
         
         if let dict = notification.userInfo as NSDictionary? {
@@ -277,6 +297,7 @@ class LandsideDowntimeViewController: NSTabViewController {
                         "sortTime":"",
                         "endTime":"",
                         "downtimeReason":"",
+                        "totalTime":"",
                         "category":""
                     ]
 
@@ -284,12 +305,12 @@ class LandsideDowntimeViewController: NSTabViewController {
                     entry.updateValue(data[1], forKey: "sortTime")
                     entry.updateValue(data[2], forKey: "endTime")
                     entry.updateValue(data[3], forKey: "downtimeReason")
-                    entry.updateValue(data[4], forKey: "category")
+                    entry.updateValue(data[4], forKey: "totalTime")
+                    entry.updateValue(data[5], forKey: "category")
                     
                     if !downtimeEntries.contains(entry) {
                         downtimeEntries.append(entry)
                     }
-
                 }
                 
             } else {
@@ -302,50 +323,39 @@ class LandsideDowntimeViewController: NSTabViewController {
         
             
         }
-
+        
         saveDataDragWellView.dismissView(saveDataDragWellView)
 
     }
 
-    @objc func receiveHandoff() {
-        presentAsSheet(saveDataDragWellView)
-    }
+    func downtimeValuesChangedBetween(newValues: [[String: String]], oldValues: [[String: String]]) -> Bool {
         
-    @objc func closeSaveDataView() {
-        saveDataDragWellView.dismiss(saveDataDragWellView)
-    }
-
-    @objc func checkFieldsForSaveCharacters() {
+        var index = 0
         
-        var badFieldCount = 0
-            
-        if downtimeEntries.isEmpty {
-            nc.post(name: .landsideEntriesDoNotContainSaveCharacters, object: nil)
-            entriesHaveSaveCharacters = false
-        } else {
-            for entry in downtimeEntries {
-                
-                if entry["downtimeReason"]!.contains("%$") || entry["downtimeReason"]!.contains("&#~") {
-                    badFieldCount += 1
-                }
-                
-                if badFieldCount > 0 {
-                    nc.post(name: Notification.Name.landsideEntriesContainSaveCharacters, object: nil)
-                    entriesHaveSaveCharacters = true
-                } else {
-                    nc.post(name: Notification.Name.landsideEntriesDoNotContainSaveCharacters, object: nil)
-                    entriesHaveSaveCharacters = false
-                }
+        for _ in newValues {
+            if oldValues.isEmpty {
+                return true
             }
+            if oldValues.count < newValues.count {
+                return true
+            }
+            if newValues.count < oldValues.count {
+                return true
+            }
+            if newValues[index] != oldValues[index] && index < oldValues.count {
+                return true
+            }
+            index += 1
         }
-
+        
+        return false
     }
-    
+
     func fetchTimes() {
         startTimes.fetchStartTimes()
         endTimes.fetchEndTimes()
     }
-
+    
     @objc func updateTimes() {
         startTimes.updateStartTimes()
         startTimeComboBox.reloadData()
@@ -353,7 +363,24 @@ class LandsideDowntimeViewController: NSTabViewController {
         endTimes.updateEndTimes()
         endTimeComboBox.reloadData()
     }
+    
+    func enableAddDowntimeButton() {
+        addDowntimeButton.isEnabled = true
+    }
 
+    func contentIsValid(cbx: NSComboBox) -> Bool {
+        if cbx.stringValue.length == 4 && cbx.stringValue.isNumeric {
+            return true
+        } else { return false }
+    }
+    
+    @objc func fetchTotalTimes() {
+        if contentIsValid(cbx: startTimeComboBox) && contentIsValid(cbx: endTimeComboBox) {
+            totalTimes.getTotalTimes(start: startTimeComboBox.stringValue, end: endTimeComboBox.stringValue)
+        }
+        totalTimeComboBox.reloadData()
+    }
+    
     func getSortingTime(for time: String) -> String {
         
         guard time.length == 4 else { return time }
@@ -378,68 +405,83 @@ class LandsideDowntimeViewController: NSTabViewController {
         
         return sortTime
     }
+
+    @objc func checkFieldsForSaveCharacters() {
+        
+        var badFieldCount = 0
+            
+        if downtimeEntries.isEmpty {
+            nc.post(name: .vesselRailEntriesDoNotContainSaveCharacters, object: nil)
+            entriesHaveSaveCharacters = false
+        } else {
+            for entry in downtimeEntries {
+                
+                if entry["downtimeReason"]!.contains("%$") || entry["downtimeReason"]!.contains("&#~") {
+                    badFieldCount += 1
+                }
+                
+                if badFieldCount > 0 {
+                    nc.post(name: Notification.Name.vesselRailEntriesContainSaveCharacters, object: nil)
+                    entriesHaveSaveCharacters = true
+                } else {
+                    nc.post(name: Notification.Name.vesselRailEntriesDoNotContainSaveCharacters, object: nil)
+                    entriesHaveSaveCharacters = false
+                }
+            }
+        }
+
+    }
     
-    @objc func selectLightCurtainBreak() {
+    @objc func selectMechanical() {
         categoryComboBox.selectItem(at: 0)
         categorySelected(categoryComboBox)
     }
     
-    @objc func selectReland() {
+    @objc func selectOperational() {
         categoryComboBox.selectItem(at: 1)
         categorySelected(categoryComboBox)
-        
-        endTimeComboBox.stringValue.removeAll()
-        endTimeComboBox.isEnabled = false
-        
     }
     
-    @objc func selectFlip() {
+    @objc func selectEStop() {
         categoryComboBox.selectItem(at: 2)
         categorySelected(categoryComboBox)
-
-        startTimeComboBox.stringValue.removeAll()
-        startTimeComboBox.isEnabled = false
-        
-        endTimeComboBox.stringValue.removeAll()
-        endTimeComboBox.isEnabled = false
-
     }
     
-    @objc func selectASCfault() {
+    @objc func selectSystem() {
         categoryComboBox.selectItem(at: 3)
         categorySelected(categoryComboBox)
     }
     
-    @objc func selectNote() {
+    @objc func selectRMGfault() {
         categoryComboBox.selectItem(at: 4)
+        categorySelected(categoryComboBox)
+    }
+    
+    @objc func selectDeadtime() {
+        categoryComboBox.selectItem(at: 5)
+        categorySelected(categoryComboBox)
+    }
+    
+    @objc func selectNote() {
+        categoryComboBox.selectItem(at: 6)
         categorySelected(categoryComboBox)
     }
     
     @objc func deselectCategory() {
         categoryComboBox.deselectItem(at: categoryComboBox.indexOfSelectedItem)
         categorySelected(categoryComboBox)
-        
-        startTimeComboBox.isEnabled = true
-        endTimeComboBox.isEnabled = true
     }
-    
-    @IBAction func categorySelected(_ sender: NSComboBox) {
-        if !categoryComboBox.stringValue.isEmpty {
-            
-            let array = [unichar(NSCarriageReturnCharacter)]
-            addDowntimeButton.keyEquivalent = String(utf16CodeUnits: array, count: 1)
-            
-        }
-    }
-    
+
     @IBAction func addDowntimeEntry(_ sender: Any) {
         
         let prefixes: [String: String] = [
-            "Light Curtain Break":"#light",
-            "Reland":"#reland",
-            "Flip":"#flip",
-            "ASC Fault":"#asc",
-            "Note":"#note",
+            "Mechanical":"#mech",
+            "Operational Scenario":"#op",
+            "E-Stop":"#estop",
+            "System / Tech":"#sys",
+            "RMG Fault":"#rmg",
+            "Deadtime":"#dead",
+            "Note":"#note"
         ]
         
         var entry: [String: String] = [
@@ -447,12 +489,14 @@ class LandsideDowntimeViewController: NSTabViewController {
             "sortTime":"",
             "endTime":"",
             "downtimeReason":"",
-            "category":"",
+            "totalTime":"",
+            "category":""
         ]
         
         if !categoryComboBox.stringValue.isEmpty {
             entry.updateValue(categoryComboBox.stringValue.trimmingCharacters(in: .whitespacesAndNewlines), forKey: "category")
         }
+
         
         if !startTimeComboBox.stringValue.isEmpty {
             entry.updateValue(startTimeComboBox.stringValue, forKey: "startTime")
@@ -468,16 +512,16 @@ class LandsideDowntimeViewController: NSTabViewController {
         }
         
         if endTimeComboBox.stringValue.isEmpty {
-            if entry.isLightCurtainBreak() {
+            if !entry.isANote() {
                 entry.updateValue("missing", forKey: "endTime")
             }
         } else {
             entry.updateValue(endTimeComboBox.stringValue, forKey: "endTime")
         }
         
-        if !downtimeReasonTextField.stringValue.isEmpty {
+        if !downtimeReasonField.stringValue.isEmpty {
             
-            var reason = downtimeReasonTextField.stringValue
+            var reason = downtimeReasonField.stringValue
             
             if let category = entry["category"] {
                 
@@ -489,25 +533,37 @@ class LandsideDowntimeViewController: NSTabViewController {
                 
                 switch category {
                     
-                case "Light Curtain Break":
+                case "Mechanical":
                     if reason.lowercased().hasPrefix(prefix) { //If the string contains the prefix category command
                         let range = reason.lowercased().range(of: prefix)! //Find the range of the prefix
                         reason.removeSubrange(range) //Remove the range of the prefix
                         reason = reason.trimmingCharacters(in: .whitespaces) //Remove any possible leading whitespace
                     }
-                case "Reland":
+                case "Operational Scenario":
                     if reason.lowercased().hasPrefix(prefix) {
                         let range = reason.lowercased().range(of: prefix)!
                         reason.removeSubrange(range)
                         reason = reason.trimmingCharacters(in: .whitespaces)
                     }
-                case "Flip":
+                case "E-Stop":
                     if reason.lowercased().hasPrefix(prefix) {
                         let range = reason.lowercased().range(of: prefix)!
                         reason.removeSubrange(range)
                         reason = reason.trimmingCharacters(in: .whitespaces)
                     }
-                case "ASC Fault":
+                case "System / Tech":
+                    if reason.lowercased().hasPrefix(prefix) {
+                        let range = reason.lowercased().range(of: prefix)!
+                        reason.removeSubrange(range)
+                        reason = reason.trimmingCharacters(in: .whitespaces)
+                    }
+                case "RMG Fault":
+                    if reason.lowercased().hasPrefix(prefix) {
+                        let range = reason.lowercased().range(of: prefix)!
+                        reason.removeSubrange(range)
+                        reason = reason.trimmingCharacters(in: .whitespaces)
+                    }
+                case "Deadtime":
                     if reason.lowercased().hasPrefix(prefix) {
                         let range = reason.lowercased().range(of: prefix)!
                         reason.removeSubrange(range)
@@ -521,19 +577,26 @@ class LandsideDowntimeViewController: NSTabViewController {
                     }
                 default:
                     break //Should not be reached
+                    
                 }
             }
             
             entry.updateValue(reason, forKey: "downtimeReason")
         }
         
+        if !totalTimeComboBox.stringValue.isEmpty {
+            entry.updateValue(totalTimeComboBox.stringValue.trimmingCharacters(in: .whitespacesAndNewlines), forKey: "totalTime")
+        }
+        
         downtimeEntries.append(entry)
+        
         clearBoxes()
+        
+        if entry.isANote() {
+            totalTimeComboBox.isEnabled = true
+        }
+        
         addDowntimeButton.keyEquivalent = String("")
-        startTimeComboBox.isEnabled = true
-        endTimeComboBox.isEnabled = true
-
-
     }
     
     @IBAction @objc func tableCellValueEdited(_ sender: NSTextField) {
@@ -564,6 +627,12 @@ class LandsideDowntimeViewController: NSTabViewController {
                         cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[1]
                     }
                     cell?.textField?.textColor = .textColor
+                } else if let comboCell = sender.superview as? VesselTotalTimesTableCellView {
+                    if selectedRow % 2 == 0 {
+                        comboCell.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[0]
+                    } else {
+                        comboCell.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[1]
+                    }
                 } else if let comboCell = sender.superview as? CategoryComboTableCellView {
                     if selectedRow % 2 == 0 {
                         comboCell.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[0]
@@ -571,51 +640,43 @@ class LandsideDowntimeViewController: NSTabViewController {
                         comboCell.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[1]
                     }
                 }
-
+                //Figure out why the colors are moving around
             }
         }
+        
     }
 
-    func downtimeValuesChangedBetween(newValues: [[String: String]], oldValues: [[String: String]]) -> Bool {
-        
-        var index = 0
-        
-        for _ in newValues {
-            if oldValues.isEmpty {
-                return true
-            }
-            if oldValues.count < newValues.count {
-                return true
-            }
-            if newValues.count < oldValues.count {
-                return true
-            }
-            if newValues[index] != oldValues[index] && index < oldValues.count {
-                return true
-            }
-            index += 1
+    
+    @IBAction func categorySelected(_ sender: NSComboBox) {
+        if !categoryComboBox.stringValue.isEmpty {
+            
+            let array = [unichar(NSCarriageReturnCharacter)]
+            addDowntimeButton.keyEquivalent = String(utf16CodeUnits: array, count: 1)
+            
         }
         
-        return false
+        if categoryComboBox.stringValue == "Note" {
+            if totalTimeComboBox.indexOfSelectedItem != -1 {
+                totalTimeComboBox.deselectItem(at: totalTimeComboBox.indexOfSelectedItem)
+            }
+            totalTimeComboBox.isEnabled = false
+        } else if categoryComboBox.indexOfSelectedItem == -1 || categoryComboBox.stringValue != "Note" {
+            totalTimeComboBox.isEnabled = true
+        }
+        
+        
     }
-
+    
     func clearBoxes() {
         startTimeComboBox.stringValue.removeAll()
         endTimeComboBox.stringValue.removeAll()
-        downtimeReasonTextField.stringValue.removeAll()
+        downtimeReasonField.stringValue.removeAll()
+        totalTimeComboBox.stringValue.removeAll()
         categoryComboBox.stringValue.removeAll()
     }
-
-    @IBAction func optionsSelected(_ sender: NSButton) {
-        if sender.state == .on {
-            shiftOptions.updateValue(true, forKey: sender.identifier!.rawValue)
-        } else if sender.state == .off {
-            shiftOptions.updateValue(false, forKey: sender.identifier!.rawValue)
-        }
-    }
-
-    @IBAction func shiftSelected(_ sender: Any) {
-        generateTextReportButton.isEnabled = true
+    
+    @IBAction func shiftSelected(_ sender: NSButton) {
+        textReportGeneratorButton.isEnabled = true
         
         
         for entry in downtimeEntries {
@@ -626,52 +687,25 @@ class LandsideDowntimeViewController: NSTabViewController {
                 
         downtimeTableView.reloadData()
         
-    }
-
-    @objc func enableRemovalButton() {
-        
-        let selectedRows = downtimeTableView.selectedRowIndexes
-        
-        if !selectedRows.isEmpty {
-            removeDowntimeButton.isEnabled = true
-        } else { removeDowntimeButton.isEnabled = false }
-        
-    }
-    
-    @IBAction func removeDowntimeEntries(_ sender: Any) {
-        
-        let selectedRows = downtimeTableView.selectedRowIndexes
-        let indicesToRemove = selectedRows.reversed()
-        
-        for index in indicesToRemove {
-            downtimeEntries.remove(at: index)
+        for (id, _) in selectedShift {
+            selectedShift.updateValue(false, forKey: id)
         }
         
-        downtimeTableView.reloadData()
-        removeDowntimeButton.isEnabled = false
-        
-    }
-
-    @IBAction func displayLSTotalsView(_ sender: NSButton) {
-        
-        guard tableContentIsValidForExport() else {
-            let alert = NSAlert()
-            alert.messageText = "Bad values!"
-            alert.informativeText = "Some of the values you entered are invalid for exporting or missing. The bad values have turned red - the missing values have been highlighted in yellow. Please correct these before attempting to export again. For guidelines on what the values must be, click Help > Downtime Help, or press Shift-Command-? on your keyboard."
-            
-            if entriesHaveSaveCharacters {
-                alert.informativeText += "\n\nYou also have the characters %$ and &#~ appearing in your downtime entries. These values cannot be used in downtime entries as Downtime uses them to save your data."
+        for (id, _) in selectedShift {
+            if sender.identifier!.rawValue == id {
+                selectedShift.updateValue(true, forKey: id)
             }
-            
-            alert.runModal()
-            return
         }
         
-        lsTotalsView.getDowntimeEntries(data: downtimeEntries)
-        presentAsSheet(lsTotalsView)
     }
     
-    
+    @IBAction func optionsSelected(_ sender: NSButton) {
+        if sender.state == .on {
+            shiftOptions.updateValue(true, forKey: sender.identifier!.rawValue)
+        } else if sender.state == .off {
+            shiftOptions.updateValue(false, forKey: sender.identifier!.rawValue)
+        }
+    }
     
     func tableContentIsValidForExport() -> Bool {
         
@@ -679,82 +713,45 @@ class LandsideDowntimeViewController: NSTabViewController {
         
         for entry in downtimeEntries {
             
-            if entry.isLightCurtainBreak() {
-                if !entry.hasStartTime() || !entry.hasEndTime() {
-                    if !badEntries.contains(entry) {
-                        badEntries.append(entry)
-                        hasBadEntries = true
-                    }
-                    if entry["startTime"]!.count != 4 || !entry["startTime"]!.isNumeric {
-                        if !badEntries.contains(entry) {
-                            badEntries.append(entry)
-                            hasBadEntries = true
-                        }
-                    }
-                    if entry["endTime"]!.count != 4 || !entry["endTime"]!.isNumeric {
-                        if !badEntries.contains(entry) {
-                            badEntries.append(entry)
-                            hasBadEntries = true
-                        }
-                    }
-                }
-            }
-            
-            if entry.isReland() {
-                if !entry.hasStartTime() {
-                    if !badEntries.contains(entry) {
-                        badEntries.append(entry)
-                        hasBadEntries = true
-                    }
-                }
+            if !entry.isANote() {
+                
                 if entry["startTime"]!.count != 4 || !entry["startTime"]!.isNumeric {
                     if !badEntries.contains(entry) {
                         badEntries.append(entry)
-                        hasBadEntries = true
                     }
+                    hasBadEntries = true
+                }
+                
+                if entry["endTime"]!.count != 4 || !entry["endTime"]!.isNumeric {
+                    if !badEntries.contains(entry) {
+                        badEntries.append(entry)
+                    }
+                    hasBadEntries = true
+                }
+                
+                if entry["totalTime"]!.isEmpty {
+                    if !badEntries.contains(entry) {
+                        badEntries.append(entry)
+                    }
+                    hasBadEntries = true
                 }
             }
             
-            if entry.isASCfault() {
-                if !entry.hasStartTime() {
-                    if !badEntries.contains(entry) {
-                        badEntries.append(entry)
-                        hasBadEntries = true
-                    }
-                }
-                if entry["startTime"]!.count != 4 || !entry["startTime"]!.isNumeric {
-                    if !badEntries.contains(entry) {
-                        badEntries.append(entry)
-                        hasBadEntries = true
-                    }
-                }
-                if entry.hasEndTime() {
-                    if entry["endTime"]!.count != 4 || !entry["endTime"]!.isNumeric {
-                        if !badEntries.contains(entry) {
-                            badEntries.append(entry)
-                            hasBadEntries = true
-                        }
-                    }
-                }
-            }
-                        
             if entry["downtimeReason"]!.isEmpty || entry["downtimeReason"]!.contains("%$") || entry["downtimeReason"]!.contains("&#~") {
                 if !badEntries.contains(entry) {
                     badEntries.append(entry)
                 }
                 hasBadEntries = true
-
             }
-
+            
             if entry["category"]!.isEmpty {
                 if !badEntries.contains(entry) {
                     badEntries.append(entry)
                 }
                 hasBadEntries = true
-
             }
         }
-        
+
         if hasBadEntries {
             indicateBadValues()
             return false
@@ -769,33 +766,24 @@ class LandsideDowntimeViewController: NSTabViewController {
     func indicateBadValues() {
         
         var valuesToHighlight = [Int: [String]]()
-
+        
         for badEntry in badEntries {
             
             var keysForBadValues = [String]()
-
+            
             if downtimeEntries.contains(badEntry) {
                 
-                if badEntry.isLightCurtainBreak() {
+                if !badEntry.isANote() {
                     if badEntry["startTime"]!.count != 4 || !badEntry["startTime"]!.isNumeric {
                         keysForBadValues.append("startTime")
                     }
-                
+                    
                     if badEntry["endTime"]!.count != 4 || !badEntry["endTime"]!.isNumeric {
                         keysForBadValues.append("endTime")
                     }
-
-                }
-                
-                if badEntry.isReland() {
-                    if badEntry["startTime"]!.count != 4 || !badEntry["startTime"]!.isNumeric {
-                        keysForBadValues.append("startTime")
-                    }
-                }
-                
-                if badEntry.isASCfault() {
-                    if badEntry["startTime"]!.count != 4 || !badEntry["startTime"]!.isNumeric {
-                        keysForBadValues.append("startTime")
+                    
+                    if badEntry["totalTime"]!.isEmpty {
+                        keysForBadValues.append("totalTime")
                     }
                 }
                 
@@ -816,11 +804,11 @@ class LandsideDowntimeViewController: NSTabViewController {
                         keysForBadValues.append("downtimeReason")
                     }
                 }
-
+                
                 if badEntry["category"]!.isEmpty {
                     keysForBadValues.append("category")
                 }
-
+                
             }
             
             valuesToHighlight.updateValue(keysForBadValues, forKey: downtimeEntries.firstIndex(of: badEntry)!)
@@ -837,60 +825,51 @@ class LandsideDowntimeViewController: NSTabViewController {
                     if entry[columnIdentifier]!.count == 4 && entry[columnIdentifier]!.isNumeric {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
                         cell?.textField?.textColor = .textColor
-                        if let row = downtimeEntries.firstIndex(of: entry) {
-                            if row % 2 == 0 {
-                                cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[0]
-                            } else {
-                                cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[1]
-                            }
-                        }
+                        cell?.textField?.backgroundColor  = .clear
                     }
                 case "endTime":
                     if entry[columnIdentifier]!.count == 4 && entry[columnIdentifier]!.isNumeric {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
                         cell?.textField?.textColor = .textColor
-                        if let row = downtimeEntries.firstIndex(of: entry) {
-                            if row % 2 == 0 {
-                                cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[0]
-                            } else {
-                                cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[1]
-                            }
-                        }
+                        cell?.textField?.backgroundColor  = .clear
                     }
+
                 case "downtimeReason":
                     if !entry[columnIdentifier]!.isEmpty && !entry[columnIdentifier]!.contains("%$") && !entry[columnIdentifier]!.contains("&#~") {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? NSTableCellView
                         cell?.textField?.textColor = .textColor
-                        if let row = downtimeEntries.firstIndex(of: entry) {
-                            if row % 2 == 0 {
-                                cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[0]
-                            } else {
-                                cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[1]
-                            }
-                        }
+                        cell?.textField?.backgroundColor  = .clear
+                    }
+                case "totalTime":
+                    if !entry[columnIdentifier]!.isEmpty {
+                        let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? VesselTotalTimesTableCellView
+                        cell?.totalTimesComboBox.backgroundColor  = .clear
+
                     }
                 case "category":
                     if !entry[columnIdentifier]!.isEmpty {
                         let cell = downtimeTableView.view(atColumn: columnIndex, row: downtimeEntries.firstIndex(of: entry)!, makeIfNecessary: false) as? CategoryComboTableCellView
-                        if let row = downtimeEntries.firstIndex(of: entry) {
-                            if row % 2 == 0 {
-                                cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[0]
-                            } else {
-                                cell?.textField?.backgroundColor = NSColor.alternatingContentBackgroundColors[1]
-                            }
-                        }
+                        cell?.categoryComboBox.backgroundColor  = .clear
                     }
                 default:
                     break
+                    
+                    
                 }
+                
             }
+            
         }
+        
         
         for (row, columnIDs) in valuesToHighlight {
             
             for id in columnIDs {
-                
-                if id == "category" {
+
+                if id == "totalTime" {
+                    let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? VesselTotalTimesTableCellView
+                    cell?.totalTimesComboBox.backgroundColor = NSColor.systemYellow
+                } else if id == "category" {
                     let cell = downtimeTableView.view(atColumn: columnNumbers[id]!, row: row, makeIfNecessary: false) as? CategoryComboTableCellView
                     cell?.categoryComboBox.backgroundColor = NSColor.systemYellow
                 } else {
@@ -910,7 +889,7 @@ class LandsideDowntimeViewController: NSTabViewController {
         valuesToHighlight.removeAll()
         badEntries.removeAll()
     }
-    
+
     @objc func checkDataAfterEntriesChanged() {
         let valuesAreGood = tableContentIsValidForExport()
         
@@ -918,7 +897,7 @@ class LandsideDowntimeViewController: NSTabViewController {
             indicateBadValues()
         }
     }
-
+    
     @objc func indicateFromAppDelegate() {
         let valuesAreGood = tableContentIsValidForExport()
         
@@ -928,9 +907,53 @@ class LandsideDowntimeViewController: NSTabViewController {
         
     }
     
+    @IBAction func displayRailTotalsView(_ sender: NSButton) {
+        
+        guard tableContentIsValidForExport() else {
+            let alert = NSAlert()
+            alert.messageText = "Bad values!"
+            alert.informativeText = "Some of the values you entered are invalid for exporting or missing. The bad values have turned red - the missing values have been highlighted in yellow. Please correct these before attempting to export again. For guidelines on what the values must be, click Help > Downtime Help, or press Shift-Command-? on your keyboard."
+            
+            if entriesHaveSaveCharacters {
+                alert.informativeText += "\n\nYou also have the characters %$ and &#~ appearing in your downtime entries. These values cannot be used in downtime entries as Downtime uses them to save your data."
+            }
+            
+            alert.runModal()
+            return
+        }
+        
+        railTotalsView.getDowntimeEntries(data: downtimeEntries)
+        railTotalsView.getShiftAndOptions(shift: selectedShift, options: shiftOptions)
+        presentAsSheet(railTotalsView)
+    }
+
+    @objc func enableRemovalButton() {
+        
+        let selectedRows = downtimeTableView.selectedRowIndexes
+        
+        if !selectedRows.isEmpty {
+            removalButton.isEnabled = true
+        } else { removalButton.isEnabled = false }
+        
+    }
+    
+    @IBAction func removeDowntimeEntries(_ sender: Any) {
+        
+        let selectedRows = downtimeTableView.selectedRowIndexes
+        let indicesToRemove = selectedRows.reversed()
+        
+        for index in indicesToRemove {
+            downtimeEntries.remove(at: index)
+        }
+        
+        downtimeTableView.reloadData()
+        removalButton.isEnabled = false
+        
+    }
+
 }
 
-extension LandsideDowntimeViewController: NSTableViewDataSource, NSTableViewDelegate {
+extension RailDowntimeViewController: NSTableViewDataSource, NSTableViewDelegate {
     
     func numberOfRows(in tableView: NSTableView) -> Int {
         return downtimeEntries.count
@@ -949,11 +972,32 @@ extension LandsideDowntimeViewController: NSTableViewDataSource, NSTableViewDele
             comboCell?.categoryComboBox.drawsBackground = true
             return comboCell
         }
-
+        
+        if cell!.identifier!.rawValue == "totalTime" {
+            let comboCell = cell as! RailTotalTimesTableCellView
+            
+            comboCell.totalTimes.startTime = item["startTime"]!
+            comboCell.totalTimes.endTime = item["endTime"]!
+            
+            comboCell.totalTimesComboBox.dataSource = comboCell.totalTimes
+            comboCell.totalTimesComboBox.delegate = comboCell.totalTimes
+            
+            if item["endTime"]!.length == 4 && item["endTime"]!.isNumeric {
+                comboCell.totalTimes.getTotalTimes(start: comboCell.totalTimes.startTime, end: comboCell.totalTimes.endTime)
+                comboCell.totalTimesComboBox.reloadData()
+            }
+        
+            comboCell.totalTimesComboBox.stringValue = item[(tableColumn!.identifier.rawValue)]!
+            comboCell.wantsLayer = true
+            comboCell.totalTimesComboBox.drawsBackground = true
+            return comboCell
+        }
+        
         cell?.textField?.stringValue = item[(tableColumn?.identifier.rawValue)!]!
         cell?.wantsLayer = true
         cell?.textField?.drawsBackground = true
         return cell
-
     }
+    
+    
 }

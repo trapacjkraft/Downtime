@@ -1,5 +1,5 @@
 //
-//  TotalTimesTableCellView.swift
+//  VesselTotalTimesTableCellView.swift
 //  Downtime
 //
 //  Created by Joshua Kraft on 6/15/19.
@@ -8,11 +8,11 @@
 
 import Cocoa
 
-class TotalTimesTableCellView: NSTableCellView {
+class VesselTotalTimesTableCellView: NSTableCellView {
 
     @IBOutlet var totalTimesComboBox: NSComboBox!
     
-    var totalTimes = TableTotalTimes()
+    var totalTimes = VesselTableTotalTimes()
         
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)

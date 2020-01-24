@@ -141,6 +141,7 @@ extension Notification.Name {
     static let entryIsOperational = Notification.Name("entryIsOperational")
     static let entryIsEStop = Notification.Name("entryIsEStop")
     static let entryIsSystem = Notification.Name("entryIsSystem")
+    static let entryIsRMGfault = Notification.Name("entryIsRMGfault")
     static let entryIsDeadtime = Notification.Name("entryIsDeadtime")
     
     static let entryIsNote = Notification.Name("entryIsNote")
@@ -163,9 +164,13 @@ extension Notification.Name {
     static let indicateBadEntries = Notification.Name("indicateBadEntries")
     
     static let displayVesselSaveDataView = Notification.Name("displayVesselSaveDataView")
+    static let displayRailSaveDataView = Notification.Name("displayRailSaveDataView")
     static let displayLandsideSaveDataView = Notification.Name("displayLandsideSaveDataView")
     
+    static let dismissSaveDataView = Notification.Name("dismissSaveDataView")
+    
     static let loadVesselSaveData = Notification.Name("loadVesselSaveData")
+    static let loadRailSaveData = Notification.Name("loadRailSaveData")
     static let loadLandsideSaveData = Notification.Name("loadLandsideSaveData")
         
 }

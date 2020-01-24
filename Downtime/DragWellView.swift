@@ -93,12 +93,16 @@ class DragWellView: NSImageView {
         let fileName = URL(fileURLWithPath: droppedFilePath!).lastPathComponent.lowercased()
         pathForNotification.updateValue(droppedFilePath!, forKey: "path")
         
-        if fileName.contains("vessel_rail") {
+        if fileName.contains("vessel_") {
             nc.post(name: .loadVesselSaveData, object: nil, userInfo: pathForNotification)
-        } else if fileName.contains("landside") {
+        } else if fileName.contains("rail_") {
+            nc.post(name: .loadRailSaveData, object: nil, userInfo: pathForNotification)
+        } else if fileName.contains("landside_") {
             nc.post(name: .loadLandsideSaveData, object: nil, userInfo: pathForNotification)
         }
-                
+        
+        nc.post(name: .dismissSaveDataView, object: nil)
+        
         return true
     }
         
