@@ -53,18 +53,16 @@ class RailDowntimeReasonFieldFormatter: Formatter {
             nc.post(name: .entryIsNotPrefixed, object: nil)
         }
         
-        if partialString.lowercased().contains("operator") && partialString.lowercased().contains("received") {
-            let range = NSRange(location: 0, length: partialString.count)
-            if regex.numberOfMatches(in: partialString, options: [], range: range) > 0 {
-                let matches = regex.matches(in: partialString, options: [], range: range)
-                if let match = matches.first {
-                    if let swiftRange = Range(match.range(at: 2), in: partialString) {
-                        let theMatchString = partialString[swiftRange]
-                        let startTime = theMatchString.replacingOccurrences(of: ":", with: "")
-                        var startTimeForSTAARSnotification: [String: String] = ["startTime":startTime]
-                        nc.post(name: .entryIsCopiedFromSTAARS, object: nil, userInfo: startTimeForSTAARSnotification)
-                        
-                    }
+        let range = NSRange(location: 0, length: partialString.count)
+        if regex.numberOfMatches(in: partialString, options: [], range: range) > 0 {
+            let matches = regex.matches(in: partialString, options: [], range: range)
+            if let match = matches.first {
+                if let swiftRange = Range(match.range(at: 2), in: partialString) {
+                    let theMatchString = partialString[swiftRange]
+                    let startTime = theMatchString.replacingOccurrences(of: ":", with: "")
+                    let startTimeForSTAARSnotification: [String: String] = ["startTime":startTime]
+                    nc.post(name: .entryIsCopiedFromSTAARS, object: nil, userInfo: startTimeForSTAARSnotification)
+                    
                 }
             }
         }
