@@ -159,8 +159,8 @@
 				42F1D06223D2B05800A5A6E4 /* Rail */,
 				423F147923C1831700DBC100 /* Landside */,
 				423F147A23C1833A00DBC100 /* Supporting Classes */,
-				421C222523091115002DBCEF /* Fonts */,
 				42ADA65C22A659F500689489 /* Assets.xcassets */,
+				421C222523091115002DBCEF /* Fonts */,
 				42ADA65E22A659F500689489 /* Main.storyboard */,
 				42ADA66122A659F500689489 /* Info.plist */,
 				42ADA66222A659F500689489 /* Downtime.entitlements */,
@@ -439,14 +439,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 575V4XYC4S;
 				INFOPLIST_FILE = Downtime/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.5;
+				MARKETING_VERSION = 2.5.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trapac.Downtime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -461,14 +461,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 575V4XYC4S;
 				INFOPLIST_FILE = Downtime/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.5;
+				MARKETING_VERSION = 2.5.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.trapac.Downtime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

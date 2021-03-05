@@ -11,6 +11,8 @@ import Cocoa
 class RailDowntimeReasonFieldFormatter: Formatter {
     
     let nc = NotificationCenter.default
+    let regex = try! NSRegularExpression(pattern: #"(\d{4}/\d{2}/\d{2}).*?(\d{2}:\d{2})"#)
+    
     
     override func string(for obj: Any?) -> String? {
         
@@ -49,6 +51,38 @@ class RailDowntimeReasonFieldFormatter: Formatter {
             nc.post(name: .entryIsNote, object: nil)
         } else {
             nc.post(name: .entryIsNotPrefixed, object: nil)
+        }
+        
+        if partialString.lowercased().contains("operator") && partialString.lowercased().contains("received") {
+            let range = NSRange(location: 0, length: partialString.count)
+            if regex.numberOfMatches(in: partialString, options: [], range: range) > 0 {
+                let matches = regex.matches(in: partialString, options: [], range: range)
+                if let match = matches.first {
+                    if let swiftRange = Range(match.range(at: 2), in: partialString) {
+                        let theMatchString = partialString[swiftRange]
+                        let startTime = theMatchString.replacingOccurrences(of: ":", with: "")
+                        var startTimeForSTAARSnotification: [String: String] = ["startTime":startTime]
+                        nc.post(name: .entryIsCopiedFromSTAARS, object: nil, userInfo: startTimeForSTAARSnotification)
+                        
+                    }
+                }
+            }
+        }
+        
+        //Old bad code that previously determined if the entry was copied from STAARS
+        
+        /*if partialString.lowercased().contains("call received") && partialString.lowercased().contains(", error") {
+            
+            var startTimeForSTAARSnotification: [String: String] = ["startTime":""]
+            let timeIndexStart = String.Index(utf16Offset: 11, in: partialString)
+            let timeIndexEnd = String.Index(utf16Offset: 18, in: partialString)
+            let theStartTime = partialString[timeIndexStart...timeIndexEnd].replacingOccurrences(of: ":", with: "").substring(toIndex: 4)
+            startTimeForSTAARSnotification.updateValue(theStartTime, forKey: "startTime")
+            nc.post(name: .entryIsCopiedFromSTAARS, object: nil, userInfo: startTimeForSTAARSnotification)
+        }*/
+        
+        if partialString.isEmpty {
+            
         }
         
         return true

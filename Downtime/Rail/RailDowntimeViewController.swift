@@ -90,6 +90,8 @@ class RailDowntimeViewController: NSTabViewController {
 
     var entriesHaveSaveCharacters = false
     
+    var entryWasCopiedFromSTAARS = false
+    
     var dateFetcherTimer = Timer()
     var saveDataTimer = Timer()
     
@@ -140,9 +142,11 @@ class RailDowntimeViewController: NSTabViewController {
         nc.addObserver(self, selector: #selector(selectEStop), name: .entryIsEStop, object: nil)
         nc.addObserver(self, selector: #selector(selectSystem), name: .entryIsSystem, object: nil)
         nc.addObserver(self, selector: #selector(selectRMGfault), name: .entryIsRMGfault, object: nil)
+        nc.addObserver(self, selector: #selector(copyEntryFromSTAARS(notification:)), name: .entryIsCopiedFromSTAARS, object: nil)
         nc.addObserver(self, selector: #selector(selectDeadtime), name: .entryIsDeadtime, object: nil)
         nc.addObserver(self, selector: #selector(selectNote), name: .entryIsNote, object: nil)
         nc.addObserver(self, selector: #selector(deselectCategory), name: .entryIsNotPrefixed, object: nil)
+        nc.addObserver(self, selector: #selector(entryWasDeleted), name: .entryWasDeleted, object: nil)
         
         nc.addObserver(self, selector: #selector(receiveHandoff), name: .displayRailSaveDataView, object: nil)
         nc.addObserver(self, selector: #selector(closeSaveDataView), name: .dismissSaveDataView, object: nil)
@@ -457,6 +461,76 @@ class RailDowntimeViewController: NSTabViewController {
         categorySelected(categoryComboBox)
     }
     
+    @objc func copyEntryFromSTAARS(notification: Notification) {
+        
+        var theStartTime = ""
+        let allowedMinuteValues = ["00", "06", "12", "18", "24", "30", "36", "42", "48", "54"]
+        
+        if let startTimeDict = notification.userInfo as? [String: String] {
+            if let startTime = startTimeDict["startTime"] {
+                if startTime.count == 4 && startTime.isNumeric {
+                    var minutes = startTime.substring(fromIndex: 2)
+                    var hour = startTime.substring(toIndex: 2)
+                    
+                    if !allowedMinuteValues.contains(minutes) {
+                        let intMinutes = Int(minutes)!
+                        var intHour = Int(hour)!
+                        
+                        switch intMinutes {
+        
+                        case 0..<6:
+                            if (intMinutes - 0) < 3 { minutes = "00" } else { minutes = "06" }
+                        case 6..<12:
+                            if (intMinutes - 6) < 3 { minutes = "06" } else { minutes = "12" }
+                        case 12..<18:
+                            if (intMinutes - 12) < 3 { minutes = "12" } else { minutes = "18" }
+                        case 18..<24:
+                            if (intMinutes - 18) < 3 { minutes = "18" } else { minutes = "24" }
+                        case 24..<30:
+                            if (intMinutes - 24) < 3 { minutes = "24" } else { minutes = "30" }
+                        case 30..<36:
+                            if (intMinutes - 30) < 3 { minutes = "30" } else { minutes = "36" }
+                        case 36..<42:
+                            if (intMinutes - 36) < 3 { minutes = "36" } else { minutes = "42" }
+                        case 42..<48:
+                            if (intMinutes - 42) < 3 { minutes = "42" } else { minutes = "48" }
+                        case 48..<54:
+                            if (intMinutes - 48) < 3 { minutes = "48" } else { minutes = "54" }
+                        case 54...59:
+                            if (intMinutes - 54) < 3 { minutes = "54" } else {
+                                minutes = "00"
+                                intHour += 1
+                                hour = String(intHour)
+                                if hour.length == 1 {
+                                    let beginningIndex = String.Index(utf16Offset: 0, in: hour)
+                                    hour.insert("0", at: beginningIndex)
+                                }
+                                
+                                Swift.print("x")
+                                
+                            }
+                        default:
+                            break // Should not be reached
+                        }
+                    }
+                    
+                    theStartTime = hour + minutes
+                    
+                }
+            }
+        }
+        
+        Swift.print("x")
+        
+        if theStartTime.length == 4 && theStartTime.isNumeric {
+            startTimeComboBox.stringValue = theStartTime
+        }
+        
+        categoryComboBox.selectItem(at: 4)
+        categorySelected(categoryComboBox)
+        entryWasCopiedFromSTAARS = true
+    }
+    
     @objc func selectDeadtime() {
         categoryComboBox.selectItem(at: 5)
         categorySelected(categoryComboBox)
@@ -472,6 +546,11 @@ class RailDowntimeViewController: NSTabViewController {
         categorySelected(categoryComboBox)
     }
 
+    @objc func entryWasDeleted() {
+        entryWasCopiedFromSTAARS = false
+        clearBoxes()
+    }
+    
     @IBAction func addDowntimeEntry(_ sender: Any) {
         
         let prefixes: [String: String] = [
@@ -581,6 +660,12 @@ class RailDowntimeViewController: NSTabViewController {
                 }
             }
             
+            
+            if entryWasCopiedFromSTAARS {
+                let dateAndTimeLength = 20
+                reason.removeFirst(dateAndTimeLength)
+            }
+            
             entry.updateValue(reason, forKey: "downtimeReason")
         }
         
@@ -597,6 +682,7 @@ class RailDowntimeViewController: NSTabViewController {
         }
         
         addDowntimeButton.keyEquivalent = String("")
+        entryWasCopiedFromSTAARS = false
     }
     
     @IBAction @objc func tableCellValueEdited(_ sender: NSTextField) {

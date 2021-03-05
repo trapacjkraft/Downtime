@@ -144,7 +144,7 @@ class VesselDowntimeViewController: NSTabViewController {
                 
         checkFieldsForSaveCharacters()
     }
-    
+        
     @objc func saveData() {
         
         let saveDirectory: String = NSHomeDirectory() + "/Documents/"

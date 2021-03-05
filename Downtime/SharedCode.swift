@@ -144,6 +144,9 @@ extension Notification.Name {
     static let entryIsRMGfault = Notification.Name("entryIsRMGfault")
     static let entryIsDeadtime = Notification.Name("entryIsDeadtime")
     
+    static let entryIsCopiedFromSTAARS = Notification.Name("entryIsCopiedFromSTAARS")
+    static let entryWasDeleted = Notification.Name("entryWasDeleted")
+    
     static let entryIsNote = Notification.Name("entryIsNote")
     
     static let entryIsLightCurtainBreak = Notification.Name("entryIsLightCurtainBreak")
