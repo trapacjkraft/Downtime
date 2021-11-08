@@ -82,11 +82,17 @@ class LandsideTotalsViewController: NSViewController {
     
     func createHeaderSentence() -> String {
         var headerString = String()
-        headerString.append(headerFirstPart.stringValue + " " + flexDeliveryTextField.stringValue + " ")
-        headerString.append(headerSecondPart.stringValue + " " + headerThirdPart.stringValue + " ")
-        headerString.append(mealHourDeliveryTextField.stringValue + " " + headerFourthPart.stringValue + " ")
-        headerString.append(flipsTextField.stringValue + " " + headerFifthPart.stringValue + " " + headerSixthPart.stringValue + " ")
-        headerString.append(turnTimeTextField.stringValue + " " + headerSeventhPart.stringValue)
+        headerString.append(headerFirstPart.stringValue + " ")
+        headerString.append(flexDeliveryTextField.stringValue + " ")
+        headerString.append(headerSecondPart.stringValue + " ")
+        headerString.append(headerThirdPart.stringValue + " ")
+        headerString.append(mealHourDeliveryTextField.stringValue + " ")
+        headerString.append(headerFourthPart.stringValue + " ")
+        headerString.append(flipsTextField.stringValue + " ")
+        headerString.append(headerFifthPart.stringValue + " ")
+        headerString.append(headerSixthPart.stringValue + " ")
+        headerString.append(turnTimeTextField.stringValue + " ")
+        headerString.append(headerSeventhPart.stringValue)
         
         return headerString
     }
